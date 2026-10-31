@@ -9,8 +9,23 @@ ErrorDocument 404 /404.html
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  # Canonical host, as WordPress did: value-build.com -> www.value-build.com
+  RewriteCond %{HTTP_HOST} ^value-build\.com$ [NC]
+  RewriteRule ^ https://www.value-build.com%{REQUEST_URI} [R=301,L]
+
+  # Force HTTPS (done by the Sakura SSL plugin on the old site).
+  # Sakura terminates SSL at a proxy, so %{HTTPS} is always off there;
+  # its proxy sets X-Sakura-Forwarded-For on HTTPS requests only.
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteCond %{HTTP:X-Sakura-Forwarded-For} ^$
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
   # Old WordPress language prefix: /en/about-us/ -> /about-us/
   RewriteRule ^en/(.*)$ /$1 [R=301,L]
+
+  # Old sitemap URLs (submitted to search engines) -> Astro's sitemap
+  RewriteRule ^sitemap\.(xml|rss)$ /sitemap-index.xml [R=301,L]
 
   # Add a trailing slash to page URLs (/about-us -> /about-us/)
   RewriteCond %{REQUEST_FILENAME} !-f
@@ -27,7 +42,11 @@ ErrorDocument 404 /404.html
   ExpiresByType application/javascript "access plus 1 year"
   ExpiresByType image/jpeg "access plus 1 month"
   ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/gif "access plus 1 month"
+  ExpiresByType image/webp "access plus 1 month"
+  ExpiresByType image/x-icon "access plus 1 month"
   ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType font/woff2 "access plus 1 year"
 </IfModule>
 
 <IfModule mod_deflate.c>
