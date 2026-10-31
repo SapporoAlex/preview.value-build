@@ -1,0 +1,16 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PageHeader from '@components/ui/PageHeader.astro';
+import Section from '@components/ui/Section.astro';
+import ContactForm from '@components/sections/ContactForm.astro';
+---
+
+<BaseLayout title="Contact" preloadImage="/images/photos/vb-003.jpeg">
+  <PageHeader title="Contact" subtitle="バリュービルドへのお問い合わせ" image="/images/photos/vb-003.jpeg">
+    <p>バリュービルドへのご質問やご相談、お問い合わせは下記のフォームより、お願い致します。担当者より返信させていただきます。</p>
+  </PageHeader>
+
+  <Section narrow>
+    <ContactForm />
+  </Section>
+</BaseLayout>

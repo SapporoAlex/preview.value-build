@@ -1,0 +1,127 @@
+---
+// Portfolio overview row: rounded photo + overlapping text card with
+// coloured top/bottom rules and a diagonal accent line. Alternates sides with `reverse`.
+import type { Category } from '@data/portfolio';
+import DiagonalLine from '@components/ui/DiagonalLine.astro';
+import MoreLink from '@components/ui/MoreLink.astro';
+
+interface Props {
+  category: Category;
+  reverse?: boolean;
+}
+
+const { category, reverse = false } = Astro.props;
+---
+
+<article
+  class:list={['category-showcase', `category-showcase--${category.accent}`, { 'category-showcase--reverse': reverse }]}
+>
+  <div class="category-showcase__media" data-reveal="fade">
+    <img src={category.image} alt="" loading="lazy" />
+  </div>
+
+  <div class="category-showcase__card" data-reveal="up" style="--reveal-delay: 150ms">
+    <DiagonalLine
+      class="category-showcase__line"
+      color={category.accent === 'orange' ? 'orange' : 'navy'}
+      angle={reverse ? -142 : -38}
+      length="140px"
+    />
+    <h2 class="category-showcase__title">
+      {category.href ? <a href={category.href}>{category.title}</a> : category.title}
+    </h2>
+    <p class="category-showcase__summary">{category.summary}</p>
+    {category.href && <MoreLink href={category.href} variant="button" color={category.accent} />}
+  </div>
+</article>
+
+<style lang="scss">
+  .category-showcase {
+    --accent: #{$color-navy};
+
+    display: grid;
+    align-items: center;
+
+    &--orange {
+      --accent: #{$color-orange};
+    }
+
+    @include mq(lg) {
+      grid-template-columns: 7fr 5fr;
+    }
+
+    &--reverse {
+      @include mq(lg) {
+        grid-template-columns: 5fr 7fr;
+      }
+    }
+
+    &--reverse &__media {
+      @include mq(lg) {
+        order: 2;
+      }
+    }
+
+    &__media img {
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      object-fit: cover;
+      border-radius: 3rem 3rem 0 0;
+    }
+
+    &__card {
+      position: relative;
+      z-index: 1;
+      margin: -3rem 1rem 0;
+      padding: clamp(1.75rem, 3vw, 2.75rem);
+      background: $color-white;
+      border-block: 2px solid var(--accent);
+
+      @include mq(lg) {
+        margin: 0 0 0 -4rem;
+      }
+    }
+
+    &--reverse &__card {
+      @include mq(lg) {
+        margin: 0 -4rem 0 0;
+      }
+    }
+
+    // Normal: line rises to the top-right. Reverse: mirrored, rises to the top-left.
+    // DiagonalLine is a child component, so it is styled with :global()
+    // under a scoped parent (Astro scoped styles don't reach into children).
+    &__card :global(.category-showcase__line) {
+      top: -2.5rem;
+      right: 2rem;
+    }
+
+    &--reverse &__card :global(.category-showcase__line) {
+      top: 0;
+      right: auto;
+      left: 9rem;
+    }
+
+    &__title {
+      font-family: $font-heading;
+      font-weight: 400;
+      font-size: clamp(1.15rem, 2vw, 1.375rem); // 22px
+      letter-spacing: 2px;
+      color: $color-navy;
+
+      a:hover {
+        opacity: 0.7;
+      }
+    }
+
+    &__summary {
+      margin-block: 1rem 1.5rem;
+      font-family: $font-body;
+      font-weight: 400;
+      font-size: 0.9375rem; // 15px
+      line-height: 1.8;
+      letter-spacing: 2px;
+      color: $color-navy;
+    }
+  }
+</style>

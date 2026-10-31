@@ -1,0 +1,48 @@
+---
+// The thin diagonal accent line used throughout the original design.
+// It "draws" itself in when scrolled into view (see _reveal.scss).
+//
+// Place it inside a `position: relative` parent and give it a class.
+// Because it is a child component, position it from the parent with
+// :global() under a scoped selector, e.g.
+//   .my-block :global(.my-block__line) { top: 0; right: 2rem; }
+interface Props {
+  color?: 'teal' | 'orange' | 'navy';
+  angle?: number; // degrees, negative = rising to the right
+  length?: string; // any CSS length
+  class?: string;
+  style?: string;
+}
+
+const { color = 'teal', angle = -38, length = '220px', class: className, style = '' } = Astro.props;
+---
+
+<span
+  class:list={['diagonal-line', `diagonal-line--${color}`, className]}
+  style={`--line-angle: ${angle}deg; --line-length: ${length}; ${style}`}
+  data-reveal="line"
+  aria-hidden="true"></span>
+
+<style lang="scss">
+  .diagonal-line {
+    position: absolute;
+    display: block;
+    width: var(--line-length);
+    height: 2px;
+    transform: rotate(var(--line-angle));
+    transform-origin: left center;
+    pointer-events: none;
+
+    &--teal {
+      background: $color-teal;
+    }
+
+    &--orange {
+      background: $color-orange;
+    }
+
+    &--navy {
+      background: $color-navy;
+    }
+  }
+</style>

@@ -1,0 +1,28 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PageHeader from '@components/ui/PageHeader.astro';
+import Section from '@components/ui/Section.astro';
+import CategoryShowcase from '@components/sections/CategoryShowcase.astro';
+import { categories } from '@data/portfolio';
+---
+
+<BaseLayout title="Portfolio" preloadImage="/images/photos/portfolio-banner.jpg">
+  <PageHeader title="Portfolio" subtitle="実績・事例紹介" image="/images/photos/portfolio-banner.jpg">
+    <p>
+      バリュービルドのポートフォリオは、IT関連、サービス業、福祉関連、製造業、Eコマース、不動産など多岐に渡ります。分野に特定することなく、起業家の熱意、ビジネスモデルの優位性、市場動向をベースに投資判断を行います。是非、あなたのビジネスアイディアを教えてください。
+    </p>
+  </PageHeader>
+
+  <Section>
+    <div class="showcase-list">
+      {categories.map((category, i) => <CategoryShowcase category={category} reverse={i % 2 === 1} />)}
+    </div>
+  </Section>
+</BaseLayout>
+
+<style lang="scss">
+  .showcase-list {
+    display: grid;
+    gap: clamp(4rem, 10vw, 8rem);
+  }
+</style>

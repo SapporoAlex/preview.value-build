@@ -1,0 +1,26 @@
+---
+// "Other Categories & Portfolio" block at the bottom of each category page.
+// Pass the key of the current page's category so it is left out.
+import { categories } from '@data/portfolio';
+import Section from '@components/ui/Section.astro';
+import SectionTitle from '@components/ui/SectionTitle.astro';
+import CategoryCard from '@components/cards/CategoryCard.astro';
+
+interface Props {
+  current: string;
+}
+
+const { current } = Astro.props;
+const others = categories.filter((c) => c.key !== current);
+---
+
+<Section background="fade">
+  <SectionTitle title="Other Categories & Portfolio" />
+  <div class="grid grid--3">
+    {
+      others.map((c, i) => (
+        <CategoryCard title={c.title} href={c.href} accent={i % 2 ? 'teal' : 'orange'} delay={i * 120} />
+      ))
+    }
+  </div>
+</Section>

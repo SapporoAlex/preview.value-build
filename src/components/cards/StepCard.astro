@@ -1,0 +1,65 @@
+---
+// Investment step with icon (How We Invest page).
+// `accent` sets the title colour; the page cycles navy → orange → teal → navy.
+import type { InvestStep } from '@data/invest';
+
+interface Props {
+  step: InvestStep;
+  accent?: 'navy' | 'orange' | 'teal';
+  delay?: number;
+}
+
+const { step, accent = 'navy', delay = 0 } = Astro.props;
+---
+
+<article class:list={['step-card', `step-card--${accent}`]} data-reveal="up" style={`--reveal-delay: ${delay}ms`}>
+  <img class="step-card__icon" src={step.icon} alt="" loading="lazy" width="54" height="54" />
+  <h3 class="step-card__title">{step.title}</h3>
+  <div class="step-card__text prose">
+    {step.paragraphs.map((p) => <p>{p}</p>)}
+  </div>
+</article>
+
+<style lang="scss">
+  .step-card {
+    --accent: #{$color-navy};
+
+    &--orange {
+      --accent: #{$color-orange};
+    }
+
+    &--teal {
+      --accent: #{$color-teal};
+    }
+
+    &__icon {
+      width: 54px;
+      height: 54px;
+      margin-bottom: 1.25rem;
+      transition: transform $transition-base;
+    }
+
+    &:hover &__icon {
+      transform: rotate(-8deg) scale(1.08);
+    }
+
+    &__title {
+      @include text-card-title;
+      min-height: 2.5em; // keeps body text aligned when a title wraps to two lines
+      color: var(--accent);
+
+      @include mq(lg) {
+        padding-left: 1.25rem;
+      }
+    }
+
+    &__text {
+      @include text-body;
+      margin-top: 0.75rem;
+
+      @include mq(lg) {
+        padding-inline: 1.25rem 0.5rem;
+      }
+    }
+  }
+</style>

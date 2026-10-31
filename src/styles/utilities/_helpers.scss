@@ -1,0 +1,34 @@
+@use '../abstracts' as *;
+
+// Small single-purpose helpers.
+
+.visually-hidden {
+  @include visually-hidden;
+}
+
+.text-center {
+  text-align: center;
+}
+
+// Body copy block (paragraph spacing). Text style comes from the parent.
+.prose > * + * {
+  margin-top: 1.1em;
+}
+
+// Skip link for keyboard users.
+.skip-link {
+  @include visually-hidden;
+
+  &:focus {
+    position: fixed !important;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 1000;
+    width: auto;
+    height: auto;
+    padding: 0.75rem 1rem;
+    clip: auto;
+    background: $color-navy;
+    color: $color-white;
+  }
+}

@@ -1,0 +1,57 @@
+---
+// IPO track record entry (home page).
+interface Props {
+  name: string;
+  market: string;
+  description: string;
+  history: string;
+  delay?: number;
+}
+
+const { name, market, description, history, delay = 0 } = Astro.props;
+---
+
+<article class="ipo-card" data-reveal="up" style={`--reveal-delay: ${delay}ms`}>
+  <h3 class="ipo-card__name">{name}</h3>
+  <p class="ipo-card__market">{market}</p>
+  <p class="ipo-card__description">{description}</p>
+  <p class="ipo-card__history">{history}</p>
+</article>
+
+<style lang="scss">
+  .ipo-card {
+    height: 100%;
+    padding: 1.75rem 2rem;
+    border-left: 3px solid $color-teal;
+    color: $color-black;
+    font-family: $font-body;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    transition: border-color $transition-base;
+
+    &:hover {
+      border-color: $color-orange;
+    }
+
+    &__name {
+      font-family: $font-body;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: inherit;
+    }
+
+    &__market {
+      margin-top: 0.25rem;
+      font-size: 0.8125rem; // 13px
+      font-weight: 300;
+    }
+
+    &__description,
+    &__history {
+      margin-top: 0.75rem;
+      font-size: 0.75rem; // 12px
+      font-weight: 300;
+      line-height: 1.8;
+    }
+  }
+</style>

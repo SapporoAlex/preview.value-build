@@ -1,0 +1,77 @@
+---
+// White-outlined square tile used on the navy home page band.
+// Text slides up on hover and the outline fills in.
+interface Props {
+  title: string;
+  href: string;
+  delay?: number; // ms, for staggered reveal
+}
+
+const { title, href, delay = 0 } = Astro.props;
+---
+
+<a class="link-tile" href={href} data-reveal="up" style={`--reveal-delay: ${delay}ms`}>
+  <span class="link-tile__title">{title}</span>
+  <span class="link-tile__arrow" aria-hidden="true">→</span>
+</a>
+
+<style lang="scss">
+  .link-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    min-height: 200px;
+    padding: 2rem 1.5rem;
+    border: 3px solid $color-white;
+    text-align: center;
+    color: $color-white;
+    overflow: hidden;
+    isolation: isolate;
+
+    // White fill that slides up behind the text on hover.
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: $color-white;
+      transform: translateY(101%);
+      transition: transform $transition-base;
+    }
+
+    &:hover::before,
+    &:focus-visible::before {
+      transform: translateY(0);
+    }
+
+    &__title {
+      font-family: $font-body;
+      font-weight: 500;
+      font-size: 1rem;
+      letter-spacing: 6px;
+      line-height: 1.8;
+      text-transform: uppercase;
+      transition: color $transition-base;
+    }
+
+    &__arrow {
+      font-size: 1.5rem;
+      color: $color-white;
+      transition:
+        transform $transition-base,
+        color $transition-base;
+    }
+
+    &:hover &__title {
+      color: $color-navy;
+    }
+
+    &:hover &__arrow {
+      color: $color-orange;
+      transform: translateX(6px);
+    }
+  }
+</style>

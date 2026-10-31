@@ -1,0 +1,71 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PageHeader from '@components/ui/PageHeader.astro';
+import Section from '@components/ui/Section.astro';
+import SectionTitle from '@components/ui/SectionTitle.astro';
+import FeatureStory from '@components/sections/FeatureStory.astro';
+import TeamCard from '@components/cards/TeamCard.astro';
+import { aboutFeatures, companyProfile, team } from '@data/about';
+---
+
+<BaseLayout title="About us" preloadImage="/images/photos/vb-010.jpeg">
+  <PageHeader title="About Us" subtitle="バリュービルドについて" image="/images/photos/vb-010.jpeg" />
+
+  {aboutFeatures.map((feature, i) => <FeatureStory feature={feature} eager={i === 0} />)}
+
+  <Section id="company-info" background="grey">
+    <SectionTitle variant="display" title="COMPANY INFO & OUR TEAM" reveal="flip" />
+    <div class="company" data-reveal="up">
+      <h3 class="company__heading">Company Profile</h3>
+      <ul class="company__list" role="list">
+        {companyProfile.map((line) => <li>{line}</li>)}
+      </ul>
+    </div>
+  </Section>
+
+  <Section>
+    <SectionTitle title="Our Team" />
+    <div class="team-grid">
+      {team.map((member, i) => <TeamCard member={member} delay={i * 120} />)}
+    </div>
+  </Section>
+</BaseLayout>
+
+<style lang="scss">
+  .company {
+    &__heading {
+      font-family: $font-body;
+      font-size: 1.3125rem; // 21px
+      font-weight: 500;
+      letter-spacing: 3px;
+      color: $color-text-strong;
+    }
+
+    &__list {
+      margin: 1rem 0 0;
+
+      li {
+        padding-block: 0.4rem;
+        font-family: $font-body;
+        font-weight: 300;
+        font-size: 0.875rem;
+        letter-spacing: 1px;
+        color: $color-text;
+      }
+    }
+  }
+
+  // Team: 1 column on phones, 2 on tablets, 4 on desktop.
+  .team-grid {
+    display: grid;
+    gap: 3rem 2rem;
+
+    @include mq(sm) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include mq(lg) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>

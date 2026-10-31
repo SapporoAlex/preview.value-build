@@ -1,0 +1,83 @@
+---
+// Team member profile card (About page).
+import type { TeamMember } from '@data/about';
+
+interface Props {
+  member: TeamMember;
+  delay?: number;
+}
+
+const { member, delay = 0 } = Astro.props;
+---
+
+<article class="team-card" data-reveal="up" style={`--reveal-delay: ${delay}ms`}>
+  <div class="team-card__photo">
+    <img src={member.photo} alt={member.name} loading="lazy" />
+  </div>
+  <h3 class="team-card__name">{member.name}</h3>
+  <p class="team-card__role">{member.role}</p>
+  <p class="team-card__location">{member.location}</p>
+  <div class="team-card__bio prose">
+    {member.bio.map((p) => <p>{p}</p>)}
+  </div>
+</article>
+
+<style lang="scss">
+  .team-card {
+    &__photo {
+      width: min(100%, 220px);
+      aspect-ratio: 1;
+      margin: 0 auto 1.25rem;
+      border-radius: 50%;
+      overflow: hidden;
+      background: $color-grey-light;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.8s $ease-out;
+      }
+    }
+
+    &:hover &__photo img {
+      transform: scale(1.06);
+    }
+
+    &__name {
+      font-family: $font-heading;
+      font-size: 1.125rem; // 18px
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-align: center;
+      color: $color-text-strong;
+    }
+
+    &__role,
+    &__location,
+    &__bio {
+      font-family: $font-accent;
+      font-weight: 500;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      line-height: 1.8;
+    }
+
+    &__role {
+      margin-top: 0.25rem;
+      text-align: center;
+      color: $color-text-muted;
+    }
+
+    &__location {
+      margin-top: 0;
+      text-align: center;
+      color: $color-text;
+    }
+
+    &__bio {
+      margin-top: 1rem;
+      color: $color-text;
+    }
+  }
+</style>

@@ -1,0 +1,186 @@
+---
+// Contact form. Submits to /api/contact.php (see public/api/).
+//
+// - Without JavaScript: a normal POST; PHP redirects back to
+//   /contact/?status=success (or ?status=error) and the message below shows.
+// - With JavaScript: submitted with fetch() and the result is shown inline.
+//
+// Field `name` attributes must match the keys read in public/api/contact.php.
+// Like the original, fields show placeholders; the <label>s are kept for
+// screen readers but visually hidden.
+interface Props {
+  action?: string;
+}
+
+const { action = '/api/contact.php' } = Astro.props;
+---
+
+<div class="contact-form" id="contact-form" data-reveal="up">
+  <h2 class="contact-form__title">ご相談・お問い合わせフォーム</h2>
+
+  <div class="contact-form__status" role="status" aria-live="polite" data-form-status hidden></div>
+
+  <form class="contact-form__form" method="post" action={action} novalidate data-contact-form>
+    <div class="contact-form__field">
+      <label class="visually-hidden" for="cf-company">会社名・団体名</label>
+      <input id="cf-company" name="company" type="text" placeholder="会社名・団体名" autocomplete="organization" maxlength="200" />
+    </div>
+
+    <div class="contact-form__field">
+      <label class="visually-hidden" for="cf-name">お名前（必須）</label>
+      <input id="cf-name" name="name" type="text" placeholder="*お名前" autocomplete="name" maxlength="200" required />
+    </div>
+
+    <div class="contact-form__row">
+      <div class="contact-form__field">
+        <label class="visually-hidden" for="cf-email">メールアドレス（必須）</label>
+        <input id="cf-email" name="email" type="email" placeholder="*メールアドレス" autocomplete="email" maxlength="200" required />
+      </div>
+
+      <div class="contact-form__field">
+        <label class="visually-hidden" for="cf-email-confirm">メールアドレス 確認用再入力（必須）</label>
+        <input id="cf-email-confirm" name="email_confirm" type="email" placeholder="*メールアドレス(確認用再入力)" autocomplete="off" maxlength="200" required />
+      </div>
+    </div>
+
+    <div class="contact-form__field">
+      <label class="visually-hidden" for="cf-message">ご相談・お問い合わせ（必須）</label>
+      <textarea id="cf-message" name="message" rows="6" placeholder="*ご相談・お問い合わせ" maxlength="5000" required></textarea>
+    </div>
+
+    <!-- Spam protection: real users never see or fill this field. -->
+    <div class="contact-form__trap" aria-hidden="true">
+      <label for="cf-website">Website</label>
+      <input id="cf-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+    <input type="hidden" name="form_started" value="" data-form-started />
+
+    <button class="contact-form__submit" type="submit" data-form-submit>
+      <span>Send</span>
+    </button>
+  </form>
+</div>
+
+<script>
+  import { initContactForm } from '../../scripts/contact-form';
+  initContactForm();
+</script>
+
+<style lang="scss">
+  .contact-form {
+    &__title {
+      margin-bottom: 1.75rem;
+      font-family: $font-body;
+      font-size: clamp(1.1rem, 2vw, 1.3125rem); // 21px
+      font-weight: 300;
+      letter-spacing: 1px;
+      color: $color-navy;
+    }
+
+    &__form {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    &__row {
+      display: grid;
+      gap: 1.5rem;
+
+      @include mq(md) {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    &__field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+
+      input,
+      textarea {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        background: $color-white;
+        border: 1px solid $color-navy;
+        border-radius: 0;
+        font-family: $font-body;
+        font-weight: 300;
+        font-size: 0.875rem;
+        letter-spacing: 1px;
+        color: $color-text;
+        transition:
+          border-color $transition-fast,
+          box-shadow $transition-fast;
+
+        &::placeholder {
+          color: rgba($color-navy, 0.7);
+        }
+
+        &:focus {
+          outline: none;
+          border-color: $color-teal;
+          box-shadow: 0 0 0 1px $color-teal;
+        }
+
+        &[aria-invalid='true'] {
+          border-color: $color-orange;
+          box-shadow: 0 0 0 1px $color-orange;
+        }
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 150px;
+      }
+    }
+
+    // Error messages are inserted by JavaScript, so they need a global selector.
+    :global(.contact-form__error) {
+      font-size: 0.8rem;
+      color: $color-orange;
+    }
+
+    &__trap {
+      @include visually-hidden;
+    }
+
+    &__submit {
+      justify-self: end;
+      padding: 0.45rem 1.1rem;
+      background: $color-navy;
+      border: 1px solid $color-navy;
+      color: $color-white;
+      font-family: $font-body;
+      font-size: 1.0625rem; // 17px
+      font-weight: 500;
+      letter-spacing: 3px;
+      transition:
+        background $transition-base,
+        color $transition-base;
+
+      &:hover,
+      &:focus-visible {
+        background: $color-white;
+        color: $color-navy;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+    }
+
+    &__status {
+      margin-bottom: 1.5rem;
+      padding: 1rem 1.25rem;
+      font-size: 0.9rem;
+      border-left: 4px solid $color-teal;
+      background: rgba($color-teal, 0.12);
+
+      &.is-error {
+        border-color: $color-orange;
+        background: rgba($color-orange, 0.1);
+      }
+    }
+  }
+</style>

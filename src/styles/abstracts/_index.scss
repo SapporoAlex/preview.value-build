@@ -1,0 +1,4 @@
+// Everything that outputs NO CSS by itself (tokens + mixins).
+// Injected automatically into every SCSS file via astro.config.mjs.
+@forward 'variables';
+@forward 'mixins';

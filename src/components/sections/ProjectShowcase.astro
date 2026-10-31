@@ -1,0 +1,102 @@
+---
+// Start-Ups × Real Estate case study: two overlapping photos + title/text.
+import type { Project } from '@data/portfolio';
+import DiagonalLine from '@components/ui/DiagonalLine.astro';
+
+interface Props {
+  project: Project;
+  index: number;
+}
+
+const { project, index } = Astro.props;
+const reverse = index % 2 === 1;
+const [mainImage, insetImage] = project.images;
+---
+
+<article class:list={['project', { 'project--reverse': reverse }]}>
+  <div class="project__media">
+    <img class="project__image project__image--main" src={mainImage} alt="" loading="lazy" data-reveal="fade" />
+    <img
+      class="project__image project__image--inset"
+      src={insetImage}
+      alt=""
+      loading="lazy"
+      data-reveal="up"
+      style="--reveal-delay: 200ms"
+    />
+  </div>
+
+  <div class="project__content">
+    <DiagonalLine class="project__line" color="teal" angle={-38} length="160px" />
+    <h2 class="project__title" data-reveal="up">{project.title}</h2>
+    <div class="project__text prose" data-reveal="up" style="--reveal-delay: 120ms">
+      {project.paragraphs.map((p) => <p>{p}</p>)}
+    </div>
+  </div>
+</article>
+
+<style lang="scss">
+  .project {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+
+    @include mq(lg) {
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+    }
+
+    &--reverse &__media {
+      @include mq(lg) {
+        order: 2;
+      }
+    }
+
+    &__media {
+      position: relative;
+      padding-bottom: 18%;
+      padding-right: 18%;
+    }
+
+    &__image {
+      object-fit: cover;
+
+      &--main {
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        background: $color-grey-light;
+      }
+
+      &--inset {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 50%;
+        aspect-ratio: 1;
+        border: 6px solid $color-white;
+        box-shadow: $shadow-card; // lifts the inset photo off the main one
+      }
+    }
+
+    &__content {
+      position: relative;
+    }
+
+    // DiagonalLine is a child component, so it is styled with :global()
+    // under a scoped parent (Astro scoped styles don't reach into children).
+    &__content :global(.project__line) {
+      top: 0.5rem;
+      right: 0;
+    }
+
+    &__title {
+      @include text-subheading;
+      margin-block: 2.5rem 1.25rem;
+    }
+
+    &__text {
+      @include text-body;
+      letter-spacing: 1px;
+    }
+  }
+</style>

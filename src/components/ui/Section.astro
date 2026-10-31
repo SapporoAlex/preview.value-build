@@ -1,0 +1,72 @@
+---
+// Generic page section: handles background colour and vertical spacing.
+//
+// <Section background="grey" spacing="sm" id="company-info"> ... </Section>
+interface Props {
+  id?: string;
+  background?: 'white' | 'grey' | 'navy' | 'fade'; // fade = grey → white gradient
+  spacing?: 'default' | 'sm' | 'none';
+  narrow?: boolean; // use the narrow container
+  fullWidth?: boolean; // skip the container entirely
+  class?: string;
+}
+
+const {
+  id,
+  background = 'white',
+  spacing = 'default',
+  narrow = false,
+  fullWidth = false,
+  class: className,
+} = Astro.props;
+---
+
+<section
+  id={id}
+  class:list={['section', `section--${background}`, `section--space-${spacing}`, className]}
+>
+  {
+    fullWidth ? (
+      <slot />
+    ) : (
+      <div class:list={['container', { 'container--narrow': narrow }]}>
+        <slot />
+      </div>
+    )
+  }
+</section>
+
+<style lang="scss">
+  .section {
+    position: relative;
+
+    &--white {
+      background: $color-white;
+    }
+
+    &--grey {
+      background: $color-grey-light;
+    }
+
+    &--navy {
+      background: $color-navy;
+      color: $color-white;
+    }
+
+    &--fade {
+      background: linear-gradient(180deg, $color-grey-light 0%, $color-white 90%);
+    }
+
+    &--space-default {
+      padding-block: $section-space;
+    }
+
+    &--space-sm {
+      padding-block: $section-space-sm;
+    }
+
+    &--space-none {
+      padding-block: 0;
+    }
+  }
+</style>

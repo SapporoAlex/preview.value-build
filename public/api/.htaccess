@@ -1,0 +1,4 @@
+# Only the form handler may be requested directly.
+<Files "config.php">
+  Require all denied
+</Files>

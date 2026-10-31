@@ -1,0 +1,31 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PageHeader from '@components/ui/PageHeader.astro';
+import Section from '@components/ui/Section.astro';
+import ProjectShowcase from '@components/sections/ProjectShowcase.astro';
+import OtherCategories from '@components/sections/OtherCategories.astro';
+import { realEstateProjects } from '@data/portfolio';
+---
+
+<BaseLayout title="Start-Ups & Real Estate" preloadImage="/images/photos/vb-007.jpg">
+  <PageHeader title="Start-Ups & Real Estate" subtitle="スタートアップビジネス×不動産" image="/images/photos/vb-007.jpg">
+    <p>価値の見出されていないユニークな不動産と、起業家を結びつけるプロジェクトが「不動産 x スタートアップ」です。</p>
+    <p>あらかじめバリュービルドが所有する不動産にあう起業家を見つけたり、一方で起業家からの要望に応じて不動産を見つけたり、柔軟な対応を行います。</p>
+    <p>「不動産 x スタートアップ」プロジェクトなら、ビジネスアイデアを叶える不動産を、融資ではなく投資という形で手に入れる事業を開始することが可能となります。</p>
+  </PageHeader>
+
+  <Section>
+    <div class="project-list">
+      {realEstateProjects.map((project, i) => <ProjectShowcase project={project} index={i} />)}
+    </div>
+  </Section>
+
+  <OtherCategories current="startups-real-estate" />
+</BaseLayout>
+
+<style lang="scss">
+  .project-list {
+    display: grid;
+    gap: clamp(4rem, 10vw, 8rem);
+  }
+</style>

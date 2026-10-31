@@ -1,0 +1,15 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PageHeader from '@components/ui/PageHeader.astro';
+import Section from '@components/ui/Section.astro';
+import Accordion from '@components/ui/Accordion.astro';
+import { faqs } from '@data/faq';
+---
+
+<BaseLayout title="Q&A" preloadImage="/images/photos/writer.jpg">
+  <PageHeader title="Q&A" subtitle="よくある質問" image="/images/photos/writer.jpg" />
+
+  <Section narrow>
+    <Accordion items={faqs} />
+  </Section>
+</BaseLayout>

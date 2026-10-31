@@ -1,0 +1,13 @@
+// ==========================================================================
+// Global stylesheet — imported once in src/layouts/BaseLayout.astro.
+//
+// Design tokens + mixins (src/styles/abstracts) are injected automatically,
+// see astro.config.mjs. Component-specific styles live inside each
+// component's own <style lang="scss"> block.
+// ==========================================================================
+
+@use 'base/reset';
+@use 'base/typography';
+@use 'layout/container';
+@use 'utilities/helpers';
+@use 'utilities/reveal';

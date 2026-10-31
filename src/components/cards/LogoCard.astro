@@ -1,0 +1,131 @@
+---
+// Company / partner logo tile.
+// - Every logo sits in the same fixed-size box, whatever its proportions.
+// - Logo is greyscale and turns to full colour on hover (original behaviour).
+// - If no logo is given, the company name is shown in the box instead.
+// - `caption`: sector shown as a coloured pill (portfolio pages).
+// - `showName`: company name shown as a grey tag (partners on the home page).
+interface Props {
+  name: string;
+  logo?: string;
+  caption?: string;
+  captionTone?: 'navy' | 'orange' | 'teal';
+  url?: string;
+  showName?: boolean;
+}
+
+const { name, logo, caption, captionTone = 'navy', url, showName = false } = Astro.props;
+const Wrapper = url ? 'a' : 'div';
+const linkProps = url ? { href: url, target: '_blank', rel: 'noopener noreferrer' } : {};
+---
+
+<figure class:list={['logo-card', { 'logo-card--plain': showName }]} data-reveal="fade">
+  <Wrapper class="logo-card__frame" {...linkProps}>
+    {
+      logo ? (
+        <img class="logo-card__logo" src={logo} alt={name} loading="lazy" />
+      ) : (
+        <span class="logo-card__name-fallback">{name}</span>
+      )
+    }
+  </Wrapper>
+  {showName && <figcaption class="logo-card__name">{name}</figcaption>}
+  {caption && <figcaption class:list={['logo-card__sector', `logo-card__sector--${captionTone}`]}>{caption}</figcaption>}
+</figure>
+
+<style lang="scss">
+  .logo-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+
+    // Fixed-ratio box. The logo is absolutely positioned inside it, so a tall
+    // or wide image can never change the box size.
+    &__frame {
+      position: relative;
+      display: block;
+      width: 100%;
+      aspect-ratio: 13 / 10;
+      background: $color-white;
+      box-shadow: $shadow-card;
+      @include greyscale-hover;
+      transition:
+        filter $transition-base,
+        opacity $transition-base,
+        transform $transition-base;
+
+      &:hover {
+        transform: translateY(-3px);
+      }
+    }
+
+    // Partners: logo on plain white, no shadow (as on the original home page).
+    &--plain &__frame {
+      box-shadow: none;
+    }
+
+    &__logo {
+      position: absolute;
+      inset: 12%;
+      width: 76%;
+      height: 76%;
+      object-fit: contain;
+    }
+
+    &__name-fallback {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      font-family: $font-heading;
+      font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-align: center;
+      color: $color-navy;
+    }
+
+    // Partner name tag (home page)
+    &__name {
+      width: 100%;
+      padding: 0.35rem 0.5rem;
+      background: $color-grey-light;
+      font-family: $font-label;
+      font-size: 0.875rem;
+      letter-spacing: 2px;
+      line-height: 1.5;
+      text-transform: uppercase;
+      text-align: center;
+      color: $color-navy;
+    }
+
+    // Sector pill (portfolio pages)
+    &__sector {
+      width: 100%;
+      padding: 0.2rem 0.75rem;
+      border-radius: 999px;
+      font-family: $font-accent;
+      font-weight: 300;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      line-height: 1.6;
+      text-align: center;
+      color: $color-white;
+
+      &--navy {
+        background: $color-navy;
+      }
+
+      &--orange {
+        background: $color-orange;
+      }
+
+      &--teal {
+        background: $color-teal;
+      }
+    }
+  }
+</style>

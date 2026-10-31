@@ -1,0 +1,302 @@
+---
+// Fixed top bar with logo + main navigation.
+// Desktop: horizontal menu, "Portfolio" dropdown opens on hover/focus.
+// Mobile (< 981px): hamburger button toggles a slide-down panel.
+import { site, mainNav } from '@data/site';
+
+const currentPath = Astro.url.pathname;
+const isActive = (href: string) => (href === '/' ? currentPath === '/' : currentPath.startsWith(href));
+---
+
+<header class="site-header" data-site-header>
+  <div class="site-header__inner">
+    <a class="site-header__logo" href="/" aria-label={`${site.name} – home`}>
+      <img src={site.logo} alt={site.name} width="54" height="56" />
+    </a>
+
+    <button
+      class="site-header__toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="main-nav"
+      data-nav-toggle
+    >
+      <span class="visually-hidden">Menu</span>
+      <span class="site-header__toggle-bar"></span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="Main" data-nav>
+      <ul class="main-nav__list" role="list">
+        {
+          mainNav.map((item) => (
+            <li class:list={['main-nav__item', { 'main-nav__item--has-children': item.children }]}>
+              <a
+                class:list={['main-nav__link', { 'is-active': isActive(item.href) }]}
+                href={item.href}
+                aria-current={currentPath === item.href ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+              {item.children && (
+                <ul class="main-nav__submenu" role="list">
+                  {item.children.map((child) => (
+                    <li>
+                      <a
+                        class:list={['main-nav__sublink', { 'is-active': isActive(child.href) }]}
+                        href={child.href}
+                      >
+                        {child.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    header?.classList.toggle('is-open', !open);
+  });
+
+  // Close the mobile menu with Escape.
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && header?.classList.contains('is-open')) {
+      header.classList.remove('is-open');
+      toggle?.setAttribute('aria-expanded', 'false');
+      toggle?.focus();
+    }
+  });
+
+  // Subtle shadow once the page has scrolled.
+  const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 10);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+
+<style lang="scss">
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 100;
+    height: $header-height;
+    background: $color-white;
+    box-shadow: 0 1px 0 rgba($color-black, 0.1);
+    transition: box-shadow $transition-fast;
+
+    &.is-scrolled {
+      box-shadow: 0 4px 18px rgba($color-black, 0.08);
+    }
+
+    // Full width (no centred container): logo hugs the left edge, menu the right.
+    &__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      padding-inline: $header-padding-x;
+    }
+
+    &__logo img {
+      width: auto;
+      height: 48px;
+    }
+
+    // --- Hamburger (mobile only) ---
+    &__toggle {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      background: none;
+      border: 0;
+
+      @include mq(lg) {
+        display: none;
+      }
+    }
+
+    // One bar + two pseudo bars that morph into an "X" when open.
+    &__toggle-bar,
+    &__toggle-bar::before,
+    &__toggle-bar::after {
+      position: absolute;
+      left: 10px;
+      width: 24px;
+      height: 2px;
+      background: $color-navy;
+      transition: transform $transition-fast, opacity $transition-fast;
+    }
+
+    &__toggle-bar {
+      top: 21px;
+
+      &::before,
+      &::after {
+        content: '';
+        left: 0;
+      }
+
+      &::before {
+        top: -7px;
+      }
+
+      &::after {
+        top: 7px;
+      }
+    }
+
+    &.is-open &__toggle-bar {
+      background: transparent;
+
+      &::before {
+        transform: translateY(7px) rotate(45deg);
+      }
+
+      &::after {
+        transform: translateY(-7px) rotate(-45deg);
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Navigation
+  // --------------------------------------------------------------------------
+  .main-nav {
+    // Mobile: hidden panel under the header
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: calc(100vh - #{$header-height});
+    overflow-y: auto;
+    background: $color-white;
+    border-top: 3px solid $color-teal;
+    box-shadow: 0 10px 20px rgba($color-black, 0.08);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition:
+      opacity $transition-fast,
+      transform $transition-fast,
+      visibility $transition-fast;
+
+    .site-header.is-open & {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+    }
+
+    @include mq(lg) {
+      position: static;
+      max-height: none;
+      overflow: visible;
+      background: none;
+      border: 0;
+      box-shadow: none;
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+    }
+
+    &__list {
+      margin: 0;
+      padding: 1rem $gutter;
+
+      @include mq(lg) {
+        display: flex;
+        gap: 1.4rem;
+        padding: 0;
+      }
+    }
+
+    &__item {
+      position: relative;
+    }
+
+    &__link {
+      display: block;
+      padding: 0.75rem 0;
+      font-family: $font-nav;
+      font-size: 0.9rem;
+      font-weight: 400;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: $color-nav;
+      border-bottom: 1px solid rgba($color-black, 0.08);
+
+      @include mq(lg) {
+        padding: 1.5rem 0;
+        border: 0;
+      }
+
+      // Original site behaviour: links fade to 70% on hover.
+      &:hover {
+        opacity: 0.7;
+      }
+
+      &.is-active {
+        color: $color-teal;
+      }
+    }
+
+    // Dropdown
+    &__submenu {
+      margin: 0;
+      padding: 0 0 0.5rem 1rem;
+
+      @include mq(lg) {
+        position: absolute;
+        top: 100%;
+        left: -1.25rem;
+        width: 270px;
+        padding: 1rem 1.25rem;
+        background: $color-white;
+        border-top: 3px solid $color-teal;
+        box-shadow: 0 2px 10px rgba($color-black, 0.1);
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(8px);
+        transition:
+          opacity $transition-fast,
+          transform $transition-fast,
+          visibility $transition-fast;
+      }
+    }
+
+    @include mq(lg) {
+      &__item--has-children:hover &__submenu,
+      &__item--has-children:focus-within &__submenu {
+        visibility: visible;
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    &__sublink {
+      display: block;
+      padding: 0.5rem 0;
+      font-family: $font-nav;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+      color: $color-nav;
+
+      &:hover {
+        opacity: 0.7;
+      }
+
+      &.is-active {
+        color: $color-teal;
+      }
+    }
+  }
+</style>

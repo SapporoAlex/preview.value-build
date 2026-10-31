@@ -1,0 +1,153 @@
+---
+// Entrepreneur testimonial. The text is folded to a short preview with a
+// centred "続きを読む" (read more) button, like the original site.
+// Without JavaScript the full text is simply shown.
+import type { Testimonial } from '@data/invest';
+
+interface Props {
+  testimonial: Testimonial;
+  delay?: number;
+}
+
+const { testimonial, delay = 0 } = Astro.props;
+---
+
+<article
+  class:list={['testimonial', `testimonial--${testimonial.theme}`]}
+  data-reveal="up"
+  data-fold
+  style={`--reveal-delay: ${delay}ms`}
+>
+  <header class="testimonial__header">
+    <h3 class="testimonial__company">{testimonial.company}</h3>
+    <p class="testimonial__person">{testimonial.person}</p>
+  </header>
+
+  <div class="testimonial__body prose" data-fold-body>
+    {testimonial.paragraphs.map((p) => <p>{p}</p>)}
+  </div>
+
+  <button class="testimonial__toggle" type="button" aria-expanded="false" data-fold-toggle hidden>
+    <span data-fold-label>続きを読む</span>
+  </button>
+</article>
+
+<script>
+  // Progressive enhancement: fold each testimonial and show the toggle button.
+  document.querySelectorAll<HTMLElement>('[data-fold]').forEach((card) => {
+    const body = card.querySelector<HTMLElement>('[data-fold-body]');
+    const toggle = card.querySelector<HTMLButtonElement>('[data-fold-toggle]');
+    const label = card.querySelector<HTMLElement>('[data-fold-label]');
+    if (!body || !toggle || !label) return;
+
+    card.classList.add('is-folded');
+    toggle.hidden = false;
+
+    toggle.addEventListener('click', () => {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!expanded));
+      card.classList.toggle('is-folded', expanded);
+      body.style.maxHeight = expanded ? '' : `${body.scrollHeight}px`;
+      label.textContent = expanded ? '続きを読む' : '閉じる';
+    });
+  });
+</script>
+
+<style lang="scss">
+  .testimonial {
+    // --bg / --fg are set by the colour theme modifiers below.
+    --bg: #{$color-white};
+    --fg: #{$color-text};
+
+    position: relative;
+    padding: 1.8rem;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: $font-accent;
+    font-size: 1rem;
+    line-height: 1.8;
+
+    // Colour themes (match the original cards)
+    &--orange {
+      --bg: #{$color-orange};
+      --fg: #{$color-white};
+    }
+
+    &--grey {
+      --bg: #{$color-grey-light};
+    }
+
+    &--white {
+      border: 1px solid $color-teal;
+    }
+
+    &--black {
+      --bg: #{$color-black};
+      --fg: #{$color-white};
+    }
+
+    &__company,
+    &__person {
+      font-family: $font-accent;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.8;
+      letter-spacing: 0;
+    }
+
+    &__person {
+      margin: 0;
+    }
+
+    &__body {
+      position: relative;
+      margin-top: 1.2em;
+      font-weight: 500;
+      overflow: hidden;
+      transition: max-height 0.8s ease;
+    }
+
+    // Folded: a short preview that fades into the card colour.
+    &.is-folded &__body {
+      max-height: 64px;
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: auto 0 0;
+        height: 40px;
+        background: linear-gradient(to bottom, transparent, var(--bg) 60%);
+      }
+    }
+
+    // Centred "read more" button sitting over the fade.
+    &__toggle {
+      display: block;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      margin-top: -1.25rem;
+      padding: 0;
+      background: none;
+      border: 0;
+      font-family: $font-accent;
+      font-weight: 700;
+      font-size: 1rem;
+      color: inherit;
+      text-align: center;
+      transition: opacity $transition-base;
+
+      &[hidden] {
+        display: none;
+      }
+
+      &[aria-expanded='true'] {
+        margin-top: 1rem;
+      }
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
+</style>

@@ -1,0 +1,20 @@
+{
+  "name": "value-build",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "preview:php": "php -S localhost:8080 -t dist",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^5.14.0"
+  },
+  "devDependencies": {
+    "sass": "^1.93.0"
+  }
+}

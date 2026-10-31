@@ -1,0 +1,163 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import HomeHero from '@components/sections/HomeHero.astro';
+import Section from '@components/ui/Section.astro';
+import SectionTitle from '@components/ui/SectionTitle.astro';
+import IpoCard from '@components/cards/IpoCard.astro';
+import LinkTile from '@components/cards/LinkTile.astro';
+import LogoCard from '@components/cards/LogoCard.astro';
+import { ipoTrackRecord, aboutTiles, partners } from '@data/home';
+---
+
+<BaseLayout preloadImage="/images/brand/hero.jpg">
+  <HomeHero />
+
+  <!-- About intro -->
+  <Section narrow>
+    <SectionTitle title="About Us" subtitle="Why Choose Value Build?" />
+    <div class="home-intro prose" data-reveal="up">
+      <p>
+        Value Build is an independent angel investment company based in Japan. At Value Build, we are always keen to
+        meet Japan-based aspiring entrepreneurs who are passionate and motivated to achieve their ambitions and maximize
+        their potentials.
+      </p>
+      <p>
+        IT関連、サービス業、福祉関連、不動産など多岐に渡り投資を行っております。自身も起業経験のある投資家が創った、エンジェル投資に特化した投資法人です。
+      </p>
+      <p>
+        ベンチャーキャピタルからの支援を受けるにはまだ実績が足りない、株主からの多大な干渉を避けたい創業者の方は、エンジェル投資家からの資金集めという選択肢を検討してみるのはいかがでしょうか。
+      </p>
+    </div>
+  </Section>
+
+  <!-- IPO track record -->
+  <Section spacing="sm" narrow>
+    <h2 class="pill-heading" data-reveal="up">投資先IPO実績</h2>
+    <div class="grid grid--2">
+      {ipoTrackRecord.map((ipo, i) => <IpoCard {...ipo} delay={i * 150} />)}
+    </div>
+  </Section>
+
+  <!-- Navy band with links into the About page -->
+  <section class="home-band">
+    <div class="container">
+      <div class="grid grid--4">
+        {aboutTiles.map((tile, i) => <LinkTile {...tile} delay={i * 120} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio teaser: gradient capsule -->
+  <div class="home-portfolio-wrap container">
+    <a class="home-portfolio" href="/portfolio-top/" data-reveal="up">
+      <span class="home-portfolio__title">Investment<br />Portfolio</span>
+      <span class="home-portfolio__subtitle">投資の実績</span>
+      <span class="home-portfolio__arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+
+  <!-- Partners -->
+  <Section>
+    <SectionTitle title="Our Partners" />
+    <div class="grid grid--4 partners">
+      {partners.map((p) => <LogoCard name={p.name} logo={p.logo} showName />)}
+    </div>
+  </Section>
+</BaseLayout>
+
+<style lang="scss">
+  .home-intro {
+    @include text-intro;
+    text-align: left;
+
+    @include mq(lg) {
+      text-align: justify;
+    }
+  }
+
+  // Rounded gradient label used for the IPO heading.
+  .pill-heading {
+    width: fit-content;
+    margin: 0 auto 2.5rem;
+    padding: 0.9rem 1.75rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, $color-navy 0%, #1d6b62 100%);
+    font-family: $font-body;
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: 3px;
+    color: $color-white;
+  }
+
+  // Navy band: photo blended with a navy → mint gradient (original effect).
+  .home-band {
+    padding-block: $section-space;
+    background:
+      url('/images/photos/vb-003.jpeg') center / cover,
+      linear-gradient(55deg, $color-navy 47%, $color-mint 100%);
+    background-blend-mode: multiply;
+  }
+
+  .home-portfolio-wrap {
+    padding-block: $section-space 0;
+  }
+
+  .home-portfolio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    max-width: 480px;
+    min-height: 240px;
+    margin-inline: auto;
+    padding: 2.5rem 2rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, $color-mint 0%, $color-navy 100%);
+    background-size: 200% 100%;
+    background-position: left center;
+    color: $color-white;
+    text-align: center;
+    transition:
+      background-position 0.8s $ease-out,
+      transform $transition-base;
+
+    // Gradient shifts and the capsule lifts slightly on hover.
+    &:hover,
+    &:focus-visible {
+      background-position: right center;
+      transform: translateY(-4px);
+    }
+
+    &__title {
+      font-family: $font-heading;
+      font-weight: 600;
+      font-size: clamp(1.3rem, 3vw, 1.8rem); // 29px
+      line-height: 1.3;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+    }
+
+    &__subtitle {
+      font-family: $font-body;
+      font-weight: 500;
+      font-size: 1rem;
+      letter-spacing: 3px;
+    }
+
+    &__arrow {
+      font-size: 2.3rem;
+      line-height: 1;
+      transition: transform $transition-base;
+    }
+
+    &:hover &__arrow {
+      transform: translateX(10px);
+    }
+  }
+
+  .partners {
+    gap: 2.5rem 2rem;
+    align-items: start;
+  }
+</style>

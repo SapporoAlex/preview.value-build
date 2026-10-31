@@ -1,0 +1,58 @@
+// ==========================================================================
+// Design tokens
+// Change a value here and it updates everywhere on the site.
+// Values are taken from the original WordPress/Divi site.
+// ==========================================================================
+
+// --- Brand colours --------------------------------------------------------
+$color-navy: #163042; // brand navy: subtitles, intro text, footer background
+$color-orange: #e2583b; // page titles, section labels, accents
+$color-teal: #75baad; // active nav link, decorative lines, accents
+$color-mint: #29c4a9; // gradient end colour
+
+$color-white: #fff;
+$color-black: #000;
+$color-grey-light: #f2f2f2; // light section backgrounds
+$color-grey-lighter: #f7f7f7; // open accordion background
+$color-border: #c6c6c6;
+
+// --- Text colours ---------------------------------------------------------
+$color-text: #282828; // default body text (dark grey, not black)
+$color-text-strong: #333; // small sub-headings, names, accordion questions
+$color-text-muted: #aaa; // job titles
+$color-nav: #042034; // header navigation links
+
+// --- Fonts ----------------------------------------------------------------
+$font-heading: 'Montserrat', 'Helvetica Neue', Arial, sans-serif; // titles
+$font-body: 'Noto Sans JP', 'Helvetica Neue', Arial, sans-serif; // most text
+$font-accent: 'Josefin Sans', 'Helvetica Neue', Arial, sans-serif; // bios, cards, testimonials
+$font-label: 'Share Tech', 'Helvetica Neue', Arial, sans-serif; // partner name tags
+$font-nav: 'Helvetica Neue', Arial, sans-serif; // header menu (original used a system sans-serif)
+
+$font-size-base: 1rem; // 16px
+$line-height-base: 1.7;
+
+// --- Layout ---------------------------------------------------------------
+$container-max: 1080px; // the original content width
+$container-narrow: 800px;
+$gutter: 1.25rem; // horizontal page padding on small screens
+$header-height: 64px;
+$header-padding-x: clamp(1rem, 2.5vw, 2.25rem); // logo / menu distance from screen edge
+
+// Vertical rhythm for sections
+$section-space: clamp(3rem, 7vw, 5.5rem);
+$section-space-sm: clamp(1.75rem, 4vw, 3rem);
+
+// --- Breakpoints (mobile first, used with the `mq` mixin) -----------------
+$breakpoints: (
+  sm: 480px,
+  md: 768px,
+  lg: 981px,
+  xl: 1280px,
+);
+
+// --- Effects --------------------------------------------------------------
+$shadow-card: 0 2px 18px rgba($color-black, 0.12);
+$transition-fast: 0.25s ease;
+$transition-base: 0.4s ease-in-out;
+$ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);

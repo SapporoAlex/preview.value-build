@@ -1,0 +1,100 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PageHeader from '@components/ui/PageHeader.astro';
+import Section from '@components/ui/Section.astro';
+import SectionTitle from '@components/ui/SectionTitle.astro';
+import StepCard from '@components/cards/StepCard.astro';
+import TestimonialCard from '@components/cards/TestimonialCard.astro';
+import { beforeInvestment, afterInvestment, testimonials } from '@data/invest';
+
+// Step titles cycle through these colours, as on the original site.
+const accents = ['navy', 'orange', 'teal', 'navy'] as const;
+---
+
+<BaseLayout title="How we invest?" preloadImage="/images/photos/vb-008.jpeg">
+  <PageHeader title="How We Invest" subtitle="投資とサービスの流れ" image="/images/photos/vb-008.jpeg" />
+
+  <!-- 8-step chart: horizontal on desktop, vertical on phones -->
+  <Section spacing="sm">
+    <SectionTitle variant="display" title="8 Steps" />
+    <picture class="chart" data-reveal="fade">
+      <source media="(max-width: 767px)" srcset="/images/how/chart-sp.png" width="916" height="1942" />
+      <img
+        src="/images/how/chart.png"
+        width="2251"
+        height="527"
+        alt="投資の8ステップ: 01 ご紹介やお問い合わせからプロジェクトスタート / 02 ビジネスのアイディアを共有 / 03 投資の方法について話し合い / 04 必要に応じて、運営ロケーションを探します / 05 プロジェクトに着手 / 06 バリュービルドがサポートし続けます / 07 一緒にビジネスを成長・拡大させていきましょう / 08 ビジネスの成功を全力でサポートします"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </picture>
+  </Section>
+
+  <Section spacing="sm">
+    <SectionTitle variant="display" italic title="Before Our Investment" subtitle="投資前のサポート" />
+    <div class="steps">
+      {beforeInvestment.map((step, i) => <StepCard step={step} accent={accents[i % 4]} delay={i * 120} />)}
+    </div>
+  </Section>
+
+  <Section spacing="sm">
+    <SectionTitle variant="display" italic title="After Our Investment" subtitle="投資後のサポート" />
+    <div class="steps">
+      {afterInvestment.map((step, i) => <StepCard step={step} accent={accents[i % 4]} delay={i * 120} />)}
+    </div>
+  </Section>
+
+  <Section id="what-people-are-saying">
+    <SectionTitle title="Feedback from our Entrepreneurs" />
+    <p class="sort-note">社名アルファベット順</p>
+    <div class="testimonials">
+      {testimonials.map((t, i) => <TestimonialCard testimonial={t} delay={(i % 2) * 150} />)}
+    </div>
+  </Section>
+</BaseLayout>
+
+<style lang="scss">
+  .chart img {
+    width: 100%;
+
+    // The vertical phone version shouldn't stretch too wide.
+    @include mq-down(md) {
+      max-width: 420px;
+      margin-inline: auto;
+    }
+  }
+
+  .steps {
+    display: grid;
+    gap: 2.5rem 0;
+
+    @include mq(sm) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2.5rem 2rem;
+    }
+
+    @include mq(lg) {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+  }
+
+  .sort-note {
+    margin-bottom: 1.5rem;
+    font-family: $font-accent;
+    font-size: 0.75rem;
+    color: $color-navy;
+    text-align: right;
+  }
+
+  .testimonials {
+    display: grid;
+    gap: 2.5rem;
+    align-items: start;
+
+    @include mq(md) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3.5rem 2.5rem;
+    }
+  }
+</style>

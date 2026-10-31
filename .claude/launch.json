@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "astro-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 4321
+    },
+    {
+      "name": "stone-and-iron-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "../stone-and-iron", "run", "dev", "--", "--port", "4322"],
+      "port": 4322
+    }
+  ]
+}

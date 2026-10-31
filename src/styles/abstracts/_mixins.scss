@@ -1,0 +1,173 @@
+@use 'sass:map';
+@use 'variables' as *;
+
+// ==========================================================================
+// Layout helpers
+// ==========================================================================
+
+// Media query helper (mobile first).
+// Usage: @include mq(md) { ... }   -> min-width: 768px
+@mixin mq($size) {
+  @media (min-width: map.get($breakpoints, $size)) {
+    @content;
+  }
+}
+
+// Max-width version for the rare "only on small screens" rule.
+// Usage: @include mq-down(md) { ... } -> max-width: 767px
+@mixin mq-down($size) {
+  @media (max-width: map.get($breakpoints, $size) - 1px) {
+    @content;
+  }
+}
+
+// ==========================================================================
+// Text styles
+// Every text style on the site is defined here, matching the original
+// design. Components use these instead of setting fonts by hand, e.g.
+//   .my-title { @include text-page-title; }
+// ==========================================================================
+
+// Orange page title at the top of each inner page ("About Us", "Q&A").
+@mixin text-page-title {
+  font-family: $font-heading;
+  font-weight: 600;
+  font-size: clamp(1.75rem, 4.5vw, 2.8rem); // 45px on desktop
+  line-height: 1.1;
+  letter-spacing: 0.13em;
+  color: $color-orange;
+}
+
+// Navy line under the page title ("バリュービルドについて").
+@mixin text-page-subtitle {
+  font-family: $font-body;
+  font-weight: 300;
+  font-size: clamp(1rem, 1.6vw, 1.125rem); // 18px
+  letter-spacing: 0.17em;
+  color: $color-navy;
+}
+
+// Small orange centred label for sections ("Our Team", "In Japan").
+@mixin text-section-label {
+  font-family: $font-heading;
+  font-weight: 600;
+  font-size: clamp(1.05rem, 1.8vw, 1.3rem); // 21px
+  line-height: 1.3;
+  letter-spacing: 0.29em;
+  color: $color-orange;
+}
+
+// Very large dark section heading ("8 Steps", "Before Our Investment").
+@mixin text-display {
+  font-family: $font-heading;
+  font-weight: 600;
+  font-size: clamp(1.6rem, 5.5vw, 3.8rem); // 61px on desktop
+  line-height: 1.1;
+  letter-spacing: 0.06em;
+  color: $color-text;
+}
+
+// Japanese line under a display heading ("投資前のサポート").
+@mixin text-display-subtitle {
+  font-family: $font-body;
+  font-weight: 500;
+  font-size: 1rem;
+  letter-spacing: 0.125em;
+  color: $color-text;
+}
+
+// Medium Montserrat headline (About page statements, 35px).
+@mixin text-headline {
+  font-family: $font-heading;
+  font-weight: 600;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  line-height: 1.5;
+  letter-spacing: 0.11em;
+  color: $color-text;
+}
+
+// Card / block title in Montserrat ("Introduction", "Tourism").
+@mixin text-card-title {
+  font-family: $font-heading;
+  font-weight: 500;
+  font-size: 1.2rem; // 19–20px
+  line-height: 1.25;
+  letter-spacing: 0.1em;
+}
+
+// Japanese sub-heading in Noto Sans ("マンスリーアパート × 訪問介護事業者").
+@mixin text-subheading {
+  font-family: $font-body;
+  font-weight: 500;
+  font-size: 1.125rem; // 18px
+  line-height: 1.6;
+  letter-spacing: 0.11em;
+  color: $color-text;
+}
+
+// Regular body copy on content pages.
+@mixin text-body {
+  font-family: $font-body;
+  font-weight: 300;
+  font-size: 1rem;
+  line-height: 1.7;
+  letter-spacing: 0.06em;
+  color: $color-text;
+}
+
+// Navy, widely spaced intro paragraph under page titles.
+@mixin text-intro {
+  font-family: $font-body;
+  font-weight: 300;
+  font-size: 0.95rem; // 15px
+  line-height: 1.9;
+  letter-spacing: 0.27em;
+  color: $color-navy;
+}
+
+// Josefin Sans copy used for bios, tourism cards and testimonials.
+@mixin text-accent {
+  font-family: $font-accent;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.8;
+  letter-spacing: 0.06em;
+  color: $color-text;
+}
+
+// ==========================================================================
+// Visual effects
+// ==========================================================================
+
+// Solid offset shadow used on cards (e.g. 10px 10px teal block behind).
+@mixin offset-shadow($color: $color-teal, $offset: 10px) {
+  box-shadow: $offset $offset 0 0 $color;
+}
+
+// Logo that is greyscale by default and turns to full colour on hover.
+@mixin greyscale-hover {
+  filter: grayscale(100%);
+  opacity: 0.85;
+  transition:
+    filter $transition-base,
+    opacity $transition-base;
+
+  &:hover,
+  &:focus-within {
+    filter: grayscale(0%);
+    opacity: 1;
+  }
+}
+
+// Visually hide but keep accessible for screen readers.
+@mixin visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
