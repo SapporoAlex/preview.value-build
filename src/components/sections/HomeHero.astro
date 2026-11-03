@@ -1,15 +1,11 @@
 ---
 // Home page intro: brand title + tagline, then the split photo band
-// with the "Are you our next venture?" message boxes.
+// with the two message boxes over the city photo.
 import { site } from '@data/site';
-import DiagonalLine from '@components/ui/DiagonalLine.astro';
 ---
 
 <section class="home-hero">
   <div class="home-hero__intro container">
-    <DiagonalLine class="home-hero__line home-hero__line--a" color="teal" angle={-38} length="180px" />
-    <DiagonalLine class="home-hero__line home-hero__line--b" color="orange" angle={-38} length="120px" />
-
     <h1 class="home-hero__title" data-reveal="up">{site.name}</h1>
     <p class="home-hero__tagline" data-reveal="up" style="--reveal-delay: 200ms">{site.tagline}</p>
   </div>
@@ -18,9 +14,9 @@ import DiagonalLine from '@components/ui/DiagonalLine.astro';
     <!-- One image file split into two halves with background-position -->
     <div class="home-hero__photo home-hero__photo--city" role="presentation">
       <div class="home-hero__message">
-        <p class="home-hero__box" data-reveal="left">We invest in visionary entrepreneurs.</p>
+        <p class="home-hero__box" data-reveal="left">あなたの起業家としての夢を、</p>
         <p class="home-hero__box home-hero__box--offset" data-reveal="left" style="--reveal-delay: 250ms">
-          Are you our next venture?
+          バリュービルドと一緒に叶えませんか？
         </p>
       </div>
     </div>
@@ -31,27 +27,8 @@ import DiagonalLine from '@components/ui/DiagonalLine.astro';
 <style lang="scss">
   .home-hero {
     &__intro {
-      position: relative;
       padding-block: clamp(4rem, 10vw, 7rem) clamp(3rem, 7vw, 5rem);
       text-align: center;
-    }
-
-    // DiagonalLine is a child component, so it is styled with :global()
-    // under a scoped parent (Astro scoped styles don't reach into children).
-    &__intro :global(.home-hero__line) {
-      @include mq-down(md) {
-        display: none;
-      }
-    }
-
-    &__intro :global(.home-hero__line--a) {
-      top: 70%;
-      left: 8%;
-    }
-
-    &__intro :global(.home-hero__line--b) {
-      top: 40%;
-      right: 6%;
     }
 
     &__title {

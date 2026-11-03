@@ -1,21 +1,26 @@
 ---
 // Photo + title + description card (Tourism portfolio).
-// The image zooms gently on hover.
+// The image zooms gently on hover. With `url`, photo and title link out.
 interface Props {
   title: string;
   image: string;
+  url?: string;
   paragraphs: string[];
   delay?: number;
 }
 
-const { title, image, paragraphs, delay = 0 } = Astro.props;
+const { title, image, url, paragraphs, delay = 0 } = Astro.props;
+const Wrapper = url ? 'a' : 'div';
+const linkProps = url ? { href: url, target: '_blank', rel: 'noopener noreferrer' } : {};
 ---
 
 <article class="photo-card" data-reveal="fade" style={`--reveal-delay: ${delay}ms`}>
-  <div class="photo-card__media">
-    <img src={image} alt={title} loading="lazy" />
-  </div>
-  <h3 class="photo-card__title">{title}</h3>
+  <Wrapper class="photo-card__link" {...linkProps}>
+    <div class="photo-card__media">
+      <img src={image} alt={title} loading="lazy" />
+    </div>
+    <h3 class="photo-card__title">{title}</h3>
+  </Wrapper>
   <div class="photo-card__text prose">
     {paragraphs.map((p) => <p>{p}</p>)}
   </div>
@@ -23,6 +28,11 @@ const { title, image, paragraphs, delay = 0 } = Astro.props;
 
 <style lang="scss">
   .photo-card {
+    &__link {
+      display: block;
+      color: inherit;
+    }
+
     &__media {
       aspect-ratio: 4 / 3;
       overflow: hidden;

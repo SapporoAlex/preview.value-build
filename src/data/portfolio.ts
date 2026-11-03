@@ -7,7 +7,8 @@
 
 export interface Category {
   key: string;
-  title: string;
+  title: string; // used in the "Other Categories" cards
+  overviewTitle?: string; // heading on /portfolio-top/ if it differs from `title`
   summary: string;
   image: string;
   href?: string;
@@ -18,6 +19,7 @@ export const categories: Category[] = [
   {
     key: 'technology',
     title: 'Technologies & Lifestyle',
+    overviewTitle: 'Lifestyle & Technology',
     summary:
       'IT関連企業をはじめ、製造業、福祉事業など、バリュービルドでは業種は定めず、世の中の課題を解決する革新的なアイデアに注目しています。',
     image: '/images/photos/vb-004.jpeg',
@@ -35,7 +37,8 @@ export const categories: Category[] = [
   },
   {
     key: 'startups-real-estate',
-    title: 'Start-Ups & Real Estate',
+    title: 'Startups × Real Estate',
+    overviewTitle: 'Property × Venture Business',
     summary:
       '起業家とユニークな不動産を結びつけるプロジェクトが「不動産 x スタートアップ」です。ビジネスアイデアを叶える事業の場（不動産）を、融資ではなく、投資という形で手に入れ、事業を開始することが可能となります。',
     image: '/images/photos/vb-007.jpg',
@@ -65,24 +68,25 @@ export interface Company {
 }
 
 export const techJapan: Company[] = [
-  { name: 'Chronogist', sector: 'プラットフォーム' },
-  { name: 'CO&CO', sector: '教育／コミュニティ', logo: '/images/tech/co.png' },
-  { name: 'ダブルエル', sector: 'コンテンツビジネス / 製造業' },
-  { name: 'Far Yeast Brewing', sector: '飲料製造業' },
+  { name: 'Chronogist', sector: 'プラットフォーム', url: 'https://www.chronowis.science/' },
+  { name: 'クララオンライン', sector: 'インターネットサービス / コンサルティング', url: 'https://www.clara.co.jp/company/profile-english/' },
+  { name: 'CO&CO', sector: '教育／コミュニティ', logo: '/images/tech/co.png', url: 'https://coandco.jp/' },
+  { name: 'ダブルエル', sector: 'コンテンツビジネス / 製造業', url: 'https://doublel.co.jp/' },
+  { name: 'Far Yeast Brewing', sector: '飲料製造業', url: 'https://faryeast.com/' },
   { name: 'ハイブリッド', sector: 'EC / 菓子製造業', url: 'https://gonutting.com/' },
   { name: 'Job Lab', sector: '人事プラットフォーム / コンサルティング', logo: '/images/tech/joblab.png', url: 'https://job-lab.co.jp/' },
-  { name: 'Kudan', sector: 'ディープテクノロジー' },
-  { name: 'SeekersBase', sector: 'DX / プラットフォーム' },
-  { name: 'Social Impact', sector: 'SDGs インベストメントファーム' },
-  { name: 'アップデータ', sector: 'ソフトウェア / クラウドサービス' },
-  { name: 'ウガゴエ', sector: 'AI / ディープラーニング' },
-  { name: 'Wonder Storage Holdings', sector: '福祉事業 / IT' },
-  { name: '歯科医院管理システム', sector: 'SaaS / 歯科医院管理システム', logo: '/images/tech/dental.png' },
-  { name: '建築・工場管理DX', sector: 'DX / 建築及び工場関連管理システム', logo: '/images/tech/construction-dx.png' },
-  { name: 'ZeroOne', sector: 'デジタルツイン ソリューションシステム', logo: '/images/tech/zeroone.png' },
-  { name: 'Fussy', sector: 'ファンダムプラットフォーム' },
-  { name: 'Oshicoco', sector: '推し活コンサル／EC' },
-  { name: 'Log Note', sector: '電子レシート', logo: '/images/tech/log-note.png' },
+  { name: 'Kudan', sector: 'ディープテクノロジー', url: 'https://www.kudan.io/' },
+  { name: 'SeekersBase', sector: 'DX / プラットフォーム', url: 'http://seekersbase.com/' },
+  { name: 'Social Impact', sector: 'SDGs インベストメントファーム', url: 'https://sipsgroup.co.jp/' },
+  { name: 'アップデータ', sector: 'ソフトウェア / クラウドサービス', url: 'https://www.updata.co.jp/' },
+  { name: 'ウガゴエ', sector: 'AI / ディープラーニング', url: 'https://www.utagoe.com/jp/' },
+  { name: 'Wonder Storage Holdings', sector: '福祉事業 / IT', url: 'https://wonderstorage-h.jp/' },
+  { name: '歯科医院管理システム', sector: 'SaaS / 歯科医院管理システム', logo: '/images/tech/dental.png', url: 'https://dentalight.co.jp/' },
+  { name: '建築・工場管理DX', sector: 'DX / 建築及び工場関連管理システム', logo: '/images/tech/construction-dx.png', url: 'https://bpm-gr.co.jp/' },
+  { name: 'ZeroOne', sector: 'デジタルツイン ソリューションシステム', logo: '/images/tech/zeroone.png', url: 'https://zeroone-1.com' },
+  { name: 'Fussy', sector: 'ファンダムプラットフォーム', url: 'https://fussy-inc.com/' },
+  { name: 'Oshicoco', sector: '推し活コンサル／EC', url: 'https://oshicoco.co.jp/' },
+  { name: 'Log Note', sector: '電子レシート', logo: '/images/tech/log-note.png', url: 'https://www.log-note.jp/' },
   { name: 'ailead', sector: 'セールスエネーブルメント SaaS', url: 'https://www.ailead.app/' },
 ];
 
@@ -99,12 +103,14 @@ export const techOverseas: Company[] = [
 export interface TourismCompany {
   name: string;
   image: string;
+  url?: string;
   paragraphs: string[];
 }
 
 export const tourismPortfolio: TourismCompany[] = [
   {
-    name: 'Travel Hokkaido',
+    name: '株式会社トラベル北海道',
+    url: 'https://yourtravelhokkaido.com/ja/',
     image: '/images/tourism/travel-hokkaido.jpg',
     paragraphs: [
       'グループ会社が貸切バス事業を運営しており、インバウンド観光客のために、ワンストップの旅行サービスを提供しているのが特徴です。',
@@ -112,37 +118,42 @@ export const tourismPortfolio: TourismCompany[] = [
     ],
   },
   {
-    name: 'Hokkaido International Creation',
+    name: '北海道国際クリエイト株式会社',
+    url: 'https://www.airbnb.jp/users/show/26100720',
     image: '/images/tourism/hokkaido-international-creation.jpg',
     paragraphs: [
-      'Over 20 AirBnB rooms located in popular tourist area of central Sapporo. Managed by AirBnB Super Host with 2,000+ positive reviews.',
+      '優れたおもてなしを提供するホストにのみ与えられる「スーパーホスト」という称号を、大手民泊運営会社より与えられた青年が立ち上げた、札幌にある民泊運営会社です。',
       '民泊だけに留まらず、飲食店の案内や通訳など、観光全般をトータルサポートしています。',
     ],
   },
   {
-    name: 'Social Compass',
+    name: '株式会社ソーシャルコンパス',
+    url: 'https://social-bus.jp/ja/home-3/',
     image: '/images/tourism/social-compass.jpg',
     paragraphs: [
-      'Chartered bus service for small and large groups travelling in Hokkaido Prefecture. Business partner of Travel Hokkaido.',
+      '北海道内でチャーターバスを運営している会社です。グループ会社の旅行代理店と一緒に、北海道の大自然を体感できるアドベンチャーツアーのバス運行を企画するなど、他社がカバーしていない分野を開拓しています。',
     ],
   },
   {
     name: 'STONE and IRON',
+    url: 'http://stoneandiron.jp',
     image: '/images/tourism/stone-and-iron.jpeg',
     paragraphs: [
-      'Historic landmark architecture of Otaru – “Stone Warehouse” located near Otaru Canal transformed to modern and stylish restaurant/bar with onsite accommodations.',
+      '小樽にあるカフェバー兼ゲストハウスです。小樽出身の青年が、東京やオーストラリア、シンガポールで修行し、長年の夢であったカフェバーを開業しました。',
       '地元の人に愛される、人気のあるカフェバーへと成長を遂げました。',
     ],
   },
   {
-    name: 'Kyoto Machiya Fukune',
+    name: 'Kyoto Machiya福音',
+    url: 'https://kyotomachiyas.com/ja/当館について/',
     image: '/images/tourism/kyoto-machiya-fukune.jpg',
     paragraphs: [
-      'Traditional Japanese style townhouses located in Kyoto restored and renovated with modern facilities and luxurious appliances.',
+      '100年以上の長屋を購入し、町家建築で名高い京都の建築士に依頼し４棟の宿を開業しました。古材を最大限に生かしながらも、ブティックホテルとしてのスタイリッシュな設備を取り入れ、モダンで美しい町家ホテルです。',
     ],
   },
   {
     name: 'Kyoto Machiya 銭屋町',
+    url: 'https://kyotomachiyas.com/ja/zeniyacho-about/',
     image: '/images/tourism/kyoto-machiya-zeniya.jpg',
     paragraphs: [
       'バリュービルド関連の町家ホテル第2号である「Kyoto Machiya 銭屋町」。お風呂をテーマとした一棟貸しの宿で、各棟には内風呂と外風呂を完備しています。',
@@ -150,23 +161,25 @@ export const tourismPortfolio: TourismCompany[] = [
     ],
   },
   {
-    name: 'TAKIBI Camping Ground',
+    name: '真狩焚き火キャンプ場',
+    url: 'http://takibi-camp.jp',
     image: '/images/tourism/takibi.jpg',
     paragraphs: [
-      'Outdoor camping facility with onsite restaurant and bar situated close to internationally renowned ski area of Niseko.',
+      '北海道・羊蹄山の麓にある「手ぶらキャンプ」が楽しめるキャンプ場です。',
       '北海道の立地とマッチする北欧デザインのキャンプ場で、初心者や旅行者でもキャンプを手ぶらで楽しめるという点が人気を博しています。多くのメディアにも取り上げられている、注目のキャンプ場です。',
     ],
   },
   {
-    name: 'Kitchen Garden',
+    name: 'Kitchen Garden及川農園',
+    url: 'http://kitchengardenjp.com',
     image: '/images/tourism/kitchen-garden.jpg',
     paragraphs: [
-      'Farm stay experience along with vegetable harvesting activity. Breakfast and dinner available and can be served with own hand-picked ingredients.',
+      '北海道・ニセコ町にほど近い蘭越町にある、ファームステイが楽しめる農園です。',
       '日本国内だけではなく、インバウンドの観光客にも、アグリツーリズムを体験してもらうことができます。また、農園で収穫した野菜の直送販売も行っています。',
     ],
   },
   {
-    name: 'Hakodate Historical Building',
+    name: '函灯',
     image: '/images/tourism/hakodate.jpg',
     paragraphs: [
       '戦前の古い建物を改装した、趣ある函館のテナントビルです。函館元町エリアの金森倉庫徒歩2分、函館の人気観光スポットである『八幡坂』や十字街駅からもほど近い、好立地に位置しています。',
@@ -206,11 +219,12 @@ export const realEstateProjects: Project[] = [
     ],
   },
   {
-    title: '農業 × ホテル',
+    title: '農業×ホテル',
     images: ['/images/projects/farm-2.jpg', '/images/projects/farm-3.jpg'],
     paragraphs: [
-      // Note: the original site reused the boutique-hotel text here — update when final copy is ready.
-      '廃墟と化した歴史的建造物を購入。再建ができないというデメリットを逆手に取り、趣を残した内装へとリノベーション。モダンで美しいデザインにすることで、ブティックホテルとして新たな価値を見出しました。',
+      // The original's desktop layout repeats the boutique-hotel text here; this is the farm text from its mobile layout.
+      '農家さんの所有する、趣溢れる農作業所をコテージ風に改装。新たにシャワーやトイレを設置し、インテリアデザイナー監修のもと家具を配置することで、「ファームステイ」ができる環境を整備しました。',
+      '農家さんは予約管理を行う必要がなく本業に専念できるため、ファームステイビジネスは収入源の1つとして見込め、人手不足が深刻化する農業への活路を見出しました。',
     ],
   },
 ];

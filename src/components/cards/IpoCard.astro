@@ -5,21 +5,24 @@ interface Props {
   market: string;
   description: string;
   history: string;
+  href?: string;
   delay?: number;
 }
 
-const { name, market, description, history, delay = 0 } = Astro.props;
+const { name, market, description, history, href, delay = 0 } = Astro.props;
+const Tag = href ? 'a' : 'article';
 ---
 
-<article class="ipo-card" data-reveal="up" style={`--reveal-delay: ${delay}ms`}>
+<Tag class="ipo-card" href={href} data-reveal="up" style={`--reveal-delay: ${delay}ms`}>
   <h3 class="ipo-card__name">{name}</h3>
   <p class="ipo-card__market">{market}</p>
   <p class="ipo-card__description">{description}</p>
   <p class="ipo-card__history">{history}</p>
-</article>
+</Tag>
 
 <style lang="scss">
   .ipo-card {
+    display: block;
     height: 100%;
     padding: 1.75rem 2rem;
     border-left: 3px solid $color-teal;

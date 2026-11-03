@@ -11,7 +11,7 @@ export const beforeInvestment: InvestStep[] = [
     icon: '/images/how/icon-1.png',
     title: 'Introduction',
     paragraphs: [
-      'You may be referred to us directly from our extensive network of business partners. But if you are not connected to any of our business partners please feel free to contact us via the email contact form on this website. We are always keen to hear from talented entrepreneurs from Japan.',
+      '投資先のベンチャー、ベンチャーキャピタル、ビジネスパートナー、商工会議所など、既存ネットワークから直接紹介を受けることもあれば、本公式ホームページから直接アプローチを受けることもあります。バリュービルドでは常に新規投資先候補を探しています。あなたのビジネスアイデアを是非お聞かせください。',
     ],
   },
   {
@@ -40,14 +40,14 @@ export const afterInvestment: InvestStep[] = [
     icon: '/images/how/icon-7.png',
     title: 'Business Set Up Support',
     paragraphs: [
-      'For those with no prior business experiences, we understand it can be a huge challenge to start and set up a new business. As experienced business professionals we have helped numerous businesses set up in the past and we can provide various support such as introduction to accountants, lawyers, real estate agents and other beneficial parties to assist your new start-up.',
+      '起業や増資などの経験がないスタートアップには、法人登記のサポート、税理士などのプロフェッショナルの紹介、経営への助言を行います。また、当社投資先を紹介し気軽にコミュニケーションが取れる関係作りをサポートします。',
     ],
   },
   {
     icon: '/images/how/icon-5.png',
     title: 'Regular Update Meeting',
     paragraphs: [
-      'We hold regular meeting with our portfolio companies to understand the business progress and the challenges the company may be facing. However, it is up to you as an entrepreneur to make the best business decision for your company.',
+      'ビジネスの進行状況の確認や、現在どのような課題に直面しているのかなどの確認を兼ねたミーティングを、定期的に実施します。',
       '但し、今後どのような道を進んでいくのかを最終的に決定するのはあなた自身です。バリュービルドはベンチャーキャピタルとは異なり、投資先企業を全力でサポートしますが強制はしません。',
     ],
   },
@@ -55,7 +55,7 @@ export const afterInvestment: InvestStep[] = [
     icon: '/images/how/icon-6.png',
     title: 'Business Network Support',
     paragraphs: [
-      'With decades of investment experience, we can provide you access to our unique and extensive network of business partners both within Japan and outside of Japan. You will be able to connect to founders from other companies for their expertise.',
+      'ビジネスが軌道に乗るまでは、人員不足という問題を抱えることになるでしょう。バリュービルドは、必要に応じ可能な業務のサポート、財務相談を実施します。',
       'また、シナジーを発揮するであろう国内外の企業を紹介しネットワークの構築もサポートします。',
     ],
   },
@@ -63,7 +63,7 @@ export const afterInvestment: InvestStep[] = [
     icon: '/images/how/icon-4.png',
     title: 'Expansion & Exit Strategy',
     paragraphs: [
-      'When your business enters into maturity you may wish to consider to various options. It may be capital raise for expansion, aim for listing on the stock market or sell the business.',
+      'ビジネスが成熟期へと突入すると、更なる拡大を図るのか、事業売却するのか、上場を目指すのかなど、さまざまなステージを考えるタイミングが訪れます。',
       'バリュービルドは今までの経験をもとに最適な選択肢をアドバイスさせていただきます。',
     ],
   },
@@ -98,7 +98,7 @@ export const testimonials: Testimonial[] = [
     ],
   },
   {
-    company: 'Travel Hokkaido',
+    company: '株式会社トラベル北海道',
     person: '取締役 大畑 ピタ',
     theme: 'white',
     paragraphs: [

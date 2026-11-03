@@ -14,12 +14,10 @@ import { ipoTrackRecord, aboutTiles, partners } from '@data/home';
 
   <!-- About intro -->
   <Section narrow>
-    <SectionTitle title="About Us" subtitle="Why Choose Value Build?" />
+    <SectionTitle title="About Us" subtitle="スタートアップへのエンジェル投資を行います。" />
     <div class="home-intro prose" data-reveal="up">
       <p>
-        Value Build is an independent angel investment company based in Japan. At Value Build, we are always keen to
-        meet Japan-based aspiring entrepreneurs who are passionate and motivated to achieve their ambitions and maximize
-        their potentials.
+        バリュービルドは、シード・ステージ、アーリー・ステージのスタートアップ企業に投資をしている、日本では稀なエンジェル投資家です。
       </p>
       <p>
         IT関連、サービス業、福祉関連、不動産など多岐に渡り投資を行っております。自身も起業経験のある投資家が創った、エンジェル投資に特化した投資法人です。
@@ -60,7 +58,7 @@ import { ipoTrackRecord, aboutTiles, partners } from '@data/home';
   <Section>
     <SectionTitle title="Our Partners" />
     <div class="grid grid--4 partners">
-      {partners.map((p) => <LogoCard name={p.name} logo={p.logo} showName />)}
+      {partners.map((p) => <LogoCard name={p.name} logo={p.logo} url={p.url} showName />)}
     </div>
   </Section>
 </BaseLayout>

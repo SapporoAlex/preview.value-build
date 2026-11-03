@@ -11,20 +11,17 @@ import { tourismPortfolio } from '@data/portfolio';
 <BaseLayout title="Tourism" preloadImage="/images/photos/tourism-banner.jpg">
   <PageHeader title="Tourism" subtitle="観光事業" image="/images/photos/tourism-banner.jpg">
     <p>
-      The extraordinary experience of "travel" has now emerged as a great desire for humans, comparable to the three
-      major desires. And Japan, which has many tourism resources, is a popular travel destination in the world.
+      『旅』という非日常の体験は、今や人間にとって三大欲求に匹敵するほどに大きな欲となって現れるようになりました。そして、多くの観光資源を有している日本は、世界的に見ても人気の旅行先です。
     </p>
     <p>
-      Looking ahead to the further development and expansion of the tourism business, we are also focusing on
-      investing in tourism-related companies and real estate such as travel agencies, private lodging management
-      companies, and boutique hotels.
+      今後見込まれる、更なる観光事業の発展・拡大を見据え、旅行代理店や民泊運営会社、ブティックホテルなど、ツーリズム関連企業や不動産への投資にも力を入れております。
     </p>
   </PageHeader>
 
   <Section>
     <SectionTitle variant="display" title="Portfolio" subtitle="事例紹介" />
     <div class="grid grid--3 tourism-grid">
-      {tourismPortfolio.map((item, i) => <PhotoCard title={item.name} image={item.image} paragraphs={item.paragraphs} delay={(i % 3) * 120} />)}
+      {tourismPortfolio.map((item, i) => <PhotoCard title={item.name} image={item.image} url={item.url} paragraphs={item.paragraphs} delay={(i % 3) * 120} />)}
     </div>
   </Section>
 

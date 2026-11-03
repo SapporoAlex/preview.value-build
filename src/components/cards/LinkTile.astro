@@ -2,7 +2,7 @@
 // White-outlined square tile used on the navy home page band.
 // Text slides up on hover and the outline fills in.
 interface Props {
-  title: string;
+  title: string; // use \n for line breaks
   href: string;
   delay?: number; // ms, for staggered reveal
 }
@@ -11,7 +11,7 @@ const { title, href, delay = 0 } = Astro.props;
 ---
 
 <a class="link-tile" href={href} data-reveal="up" style={`--reveal-delay: ${delay}ms`}>
-  <span class="link-tile__title">{title}</span>
+  <span class="link-tile__title">{title.split('\n').map((line, i) => (i ? [<br />, line] : line))}</span>
   <span class="link-tile__arrow" aria-hidden="true">→</span>
 </a>
 
