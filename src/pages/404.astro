@@ -1,38 +1,72 @@
 ---
+// "Not found" page, laid out like the original's (Divi theme 404 template:
+// text on the left, a sidebar column with a thin divider on the right).
+// The original's sidebar held WordPress widgets (search, recent posts,
+// recent comments) that don't work on a static site, so it is left empty
+// but keeps its space.
 import BaseLayout from '@layouts/BaseLayout.astro';
-import Section from '@components/ui/Section.astro';
-import MoreLink from '@components/ui/MoreLink.astro';
 ---
 
 <BaseLayout title="Page not found">
-  <Section narrow>
-    <div class="not-found">
-      <p class="not-found__code">404</p>
-      <h1 class="not-found__title">Page not found</h1>
-      <p>お探しのページは見つかりませんでした。</p>
-      <MoreLink href="/" label="Back to home" />
+  <div class="not-found">
+    <div class="not-found__main">
+      <h1 class="not-found__title">結果がありません。</h1>
+      <p>リクエストされたページは見つかりませんでした。記事を探すには、検索条件を絞るか、上記のナビゲーションを使ってください。</p>
     </div>
-  </Section>
+    <div class="not-found__sidebar" aria-hidden="true"></div>
+  </div>
 </BaseLayout>
 
 <style lang="scss">
   .not-found {
-    display: grid;
-    justify-items: center;
-    gap: 1.25rem;
-    padding-block: 4rem;
-    text-align: center;
+    position: relative;
+    display: flex;
+    width: $row-width;
+    max-width: $row-max;
+    margin: 0 auto;
+    padding-top: 59px; // 58px on the original, which starts 1px lower on this template
 
-    &__code {
-      font-family: $font-heading;
-      font-size: clamp(4rem, 15vw, 8rem);
-      font-weight: 600;
-      line-height: 1;
-      color: $color-teal;
+    @include tablet-down {
+      display: block;
+    }
+
+    // Divider between the content and the sidebar.
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 225px;
+      width: 1px;
+      height: 100%;
+      background: #e2e2e2;
+
+      @include tablet-down {
+        display: none;
+      }
+    }
+
+    &__main {
+      width: 79.125%;
+      padding: 0 5.5% 83px 0;
+
+      @include tablet-down {
+        width: 100%;
+        padding: 0 0 42px;
+      }
     }
 
     &__title {
-      @include text-page-title;
+      font-size: 30px;
+    }
+
+    &__sidebar {
+      flex: none;
+      width: 225px;
+      min-height: 276px;
+
+      @include tablet-down {
+        width: 100%;
+      }
     }
   }
 </style>

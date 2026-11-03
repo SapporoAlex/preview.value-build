@@ -1,15 +1,80 @@
 ---
+// Q&A.
 import BaseLayout from '@layouts/BaseLayout.astro';
-import PageHeader from '@components/ui/PageHeader.astro';
-import Section from '@components/ui/Section.astro';
+import PhotoBand from '@components/ui/PhotoBand.astro';
 import Accordion from '@components/ui/Accordion.astro';
 import { faqs } from '@data/faq';
 ---
 
 <BaseLayout title="Q&A" preloadImage="/images/photos/writer.jpg">
-  <PageHeader title="Q&A" subtitle="よくある質問" image="/images/photos/writer.jpg" />
+  <PhotoBand image="/images/photos/writer.jpg" />
 
-  <Section narrow>
-    <Accordion items={faqs} />
-  </Section>
+  <section class="sec page-title">
+    <div class="row page-title__row">
+      <div class="col col-4-4">
+        <h1 class="mod page-title__title">Q&amp;A</h1>
+        <p class="mod page-title__subtitle">よくある質問</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec faq">
+    <div class="row faq__row">
+      <div class="col col-4-4">
+        <Accordion class="mod" items={faqs} />
+      </div>
+    </div>
+  </section>
 </BaseLayout>
+
+<style lang="scss">
+  .page-title {
+    margin-bottom: -30px;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    @include phone {
+      padding-bottom: 0;
+    }
+
+    &__row {
+      padding-left: 200px;
+      padding-right: 200px;
+
+      @include phone {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+
+    &__title {
+      padding-bottom: 20px;
+      @include text-page-title;
+      line-height: inherit;
+
+      @include phone {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    &__subtitle {
+      @include text-page-subtitle;
+
+      @include phone {
+        padding-bottom: 10px;
+      }
+    }
+  }
+
+  .faq {
+    min-height: 1355px;
+    padding-top: 30px;
+    padding-bottom: 0;
+
+    &__row {
+      max-width: 900px;
+      margin-bottom: -600px;
+      padding-bottom: 0;
+    }
+  }
+</style>

@@ -1,0 +1,30 @@
+---
+// Thin photo band at the top of the Q&A and Contact pages (a section with a
+// cover background image and an empty row on the original).
+interface Props {
+  image: string;
+}
+
+const { image } = Astro.props;
+---
+
+<section class="sec band" style={`background-image: url('${image}')`} aria-hidden="true">
+  <div class="row band__row"><div class="col col-4-4 col--empty"></div></div>
+</section>
+
+<style lang="scss">
+  .band {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    &__row {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .col--empty {
+      min-height: 1px;
+    }
+  }
+</style>

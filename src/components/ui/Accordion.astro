@@ -1,7 +1,8 @@
 ---
-// Accordion built on native <details>/<summary> (works without JavaScript).
-// The script adds a smooth open/close height animation and keeps only
-// one item open at a time.
+// Q&A accordion, styled like the original (Divi accordion module).
+// Built on <details>/<summary> so it works without JavaScript; the script
+// adds the slide animation and keeps exactly one item open, as the original
+// does (clicking the open item does nothing).
 interface Item {
   question: string;
   answer: string[];
@@ -9,24 +10,19 @@ interface Item {
 
 interface Props {
   items: Item[];
-  openFirst?: boolean;
+  class?: string;
 }
 
-const { items, openFirst = true } = Astro.props;
+const { items, class: className, ...rest } = Astro.props;
 ---
 
-<div class="accordion" data-accordion>
+<div class:list={['accordion', className]} data-accordion {...rest}>
   {
     items.map((item, i) => (
-      <details class="accordion__item" open={openFirst && i === 0} data-reveal="up" style={`--reveal-delay: ${i * 80}ms`}>
-        <summary class="accordion__question">
-          <span>{item.question}</span>
-          <span class="accordion__icon" aria-hidden="true" />
-        </summary>
+      <details class="accordion__item" open={i === 0}>
+        <summary class="accordion__question">{item.question}</summary>
         <div class="accordion__answer" data-accordion-answer>
-          <div class="accordion__answer-inner">
-            {item.answer.map((p) => <p>{p}</p>)}
-          </div>
+          {item.answer.map((p) => <p>{p}</p>)}
         </div>
       </details>
     ))
@@ -34,31 +30,24 @@ const { items, openFirst = true } = Astro.props;
 </div>
 
 <script>
-  const DURATION = 400;
-  const EASING = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
+  const DURATION = 700; // Divi's slide speed
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function animateHeight(el: HTMLElement, from: number, to: number) {
-    return el.animate([{ height: `${from}px` }, { height: `${to}px` }], { duration: DURATION, easing: EASING });
-  }
-
-  function openItem(item: HTMLDetailsElement) {
+  function slide(item: HTMLDetailsElement, open: boolean) {
     const answer = item.querySelector<HTMLElement>('[data-accordion-answer]');
-    item.open = true; // must be open to measure the content
-    if (!answer || reduceMotion) return;
-    animateHeight(answer, 0, answer.scrollHeight);
-  }
-
-  function closeItem(item: HTMLDetailsElement) {
-    const answer = item.querySelector<HTMLElement>('[data-accordion-answer]');
+    if (open) item.open = true; // must be open to measure the content
     if (!answer || reduceMotion) {
-      item.open = false;
+      item.open = open;
       return;
     }
-    item.classList.add('is-closing');
-    const animation = animateHeight(answer, answer.offsetHeight, 0);
+    const height = answer.offsetHeight;
+    const frames = [{ height: '0px', paddingTop: '0px' }, { height: `${height}px` }];
+    item.classList.toggle('is-closing', !open);
+    answer.style.overflow = 'hidden';
+    const animation = answer.animate(open ? frames : frames.reverse(), { duration: DURATION, easing: 'ease-in-out' });
     animation.onfinish = () => {
-      item.open = false;
+      answer.style.overflow = '';
+      if (!open) item.open = false;
       item.classList.remove('is-closing');
     };
   }
@@ -68,13 +57,10 @@ const { items, openFirst = true } = Astro.props;
 
     items.forEach((item) => {
       item.querySelector('summary')?.addEventListener('click', (event) => {
-        event.preventDefault(); // we handle open/close ourselves to animate it
-        if (item.open && !item.classList.contains('is-closing')) {
-          closeItem(item);
-        } else {
-          items.filter((other) => other !== item && other.open).forEach(closeItem);
-          openItem(item);
-        }
+        event.preventDefault();
+        if (item.open) return;
+        items.filter((other) => other.open).forEach((other) => slide(other, false));
+        slide(item, true);
       });
     });
   });
@@ -82,85 +68,84 @@ const { items, openFirst = true } = Astro.props;
 
 <style lang="scss">
   .accordion {
-    display: grid;
-    gap: 0.5rem;
-
     &__item {
+      padding: 20px;
       background: transparent;
-      transition: background $transition-base;
+
+      // Space between items: 2.75% of the row width on desktop.
+      &:not(:last-child) {
+        margin-bottom: 2.75%;
+
+        @include tablet-down {
+          margin-bottom: 10px;
+        }
+      }
 
       &[open]:not(.is-closing) {
-        background: $color-grey-lighter;
+        background: rgba(0, 0, 0, 0.03);
       }
     }
 
+    // Closed: Noto Sans JP 15px with an orange "+" circle on the right.
+    // Open: Montserrat 16px, no icon.
     &__question {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1.5rem;
-      padding: 1.25rem 1.5rem;
-      font-family: $font-body;
-      font-weight: 500;
-      font-size: 0.95rem;
-      letter-spacing: 1px;
-      color: $color-text-strong;
+      position: relative;
+      display: block;
+      padding-right: 50px;
+      @include font($font-body, 15px, 500, 1.5em, 1px);
+      color: $color-heading;
       cursor: pointer;
       list-style: none;
-      transition: color $transition-fast;
 
       &::-webkit-details-marker {
         display: none;
       }
-
-      &:hover {
-        color: $color-orange;
-      }
-    }
-
-    // Orange circle with a plus that turns into a minus when open.
-    &__icon {
-      position: relative;
-      flex-shrink: 0;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: $color-orange;
 
       &::before,
       &::after {
         content: '';
         position: absolute;
         top: 50%;
-        left: 50%;
-        width: 8px;
-        height: 2px;
-        margin: -1px 0 0 -4px;
-        background: $color-white;
-        transition: transform $transition-base;
+        right: 0;
+        width: 15px;
+        height: 15px;
+        margin-top: -7.5px;
+      }
+
+      &::before {
+        border-radius: 50%;
+        background: #f46624;
       }
 
       &::after {
-        transform: rotate(90deg);
+        background:
+          linear-gradient($color-white, $color-white) center / 9px 2px no-repeat,
+          linear-gradient($color-white, $color-white) center / 2px 9px no-repeat;
       }
     }
 
-    &__item[open]:not(.is-closing) &__icon::after {
-      transform: rotate(0deg);
+    &__item[open]:not(.is-closing) &__question {
+      font-family: $font-heading;
+      font-size: 16px;
+
+      &::before,
+      &::after {
+        display: none;
+      }
     }
 
-    // The outer element is what gets animated; overflow hides content mid-animation.
     &__answer {
-      overflow: hidden;
-    }
-
-    &__answer-inner {
-      padding: 0 1.5rem 1.5rem;
-      font-family: $font-body;
-      font-weight: 300;
-      font-size: 0.95rem;
-      letter-spacing: 1px;
+      padding-top: 20px;
+      @include font($font-body, 15px, 300, 1.8em, 1px);
       color: $color-text;
+
+      p {
+        padding-bottom: 15px;
+
+        &:last-child {
+          padding-bottom: 0;
+        }
+      }
     }
   }
 </style>

@@ -7,21 +7,24 @@
 //
 // Field `name` attributes must match the keys read in public/api/contact.php.
 // Like the original, fields show placeholders; the <label>s are kept for
-// screen readers but visually hidden.
+// screen readers but visually hidden. Layout and sizes follow the original
+// (Divi contact form module).
 interface Props {
   action?: string;
+  class?: string;
 }
 
-const { action = '/api/contact.php' } = Astro.props;
+const { action = '/api/contact.php', class: className, ...rest } = Astro.props;
 ---
 
-<div class="contact-form" id="contact-form" data-reveal="up">
+<div class:list={['contact-form', className]} id="contact-form" {...rest}>
   <h2 class="contact-form__title">ご相談・お問い合わせフォーム</h2>
 
   <div class="contact-form__status" role="status" aria-live="polite" data-form-status hidden></div>
 
   <form class="contact-form__form" method="post" action={action} novalidate data-contact-form>
-    <div class="contact-form__field">
+    <!-- Only the first field has a navy border on the original; the others are #333. -->
+    <div class="contact-form__field contact-form__field--first">
       <label class="visually-hidden" for="cf-company">会社名・団体名</label>
       <input id="cf-company" name="company" type="text" placeholder="会社名・団体名" autocomplete="organization" maxlength="200" />
     </div>
@@ -31,21 +34,19 @@ const { action = '/api/contact.php' } = Astro.props;
       <input id="cf-name" name="name" type="text" placeholder="*お名前" autocomplete="name" maxlength="200" required />
     </div>
 
-    <div class="contact-form__row">
-      <div class="contact-form__field">
-        <label class="visually-hidden" for="cf-email">メールアドレス（必須）</label>
-        <input id="cf-email" name="email" type="email" placeholder="*メールアドレス" autocomplete="email" maxlength="200" required />
-      </div>
+    <div class="contact-form__field contact-form__field--half">
+      <label class="visually-hidden" for="cf-email">メールアドレス（必須）</label>
+      <input id="cf-email" name="email" type="email" placeholder="*メールアドレス" autocomplete="email" maxlength="200" required />
+    </div>
 
-      <div class="contact-form__field">
-        <label class="visually-hidden" for="cf-email-confirm">メールアドレス 確認用再入力（必須）</label>
-        <input id="cf-email-confirm" name="email_confirm" type="email" placeholder="*メールアドレス(確認用再入力)" autocomplete="off" maxlength="200" required />
-      </div>
+    <div class="contact-form__field contact-form__field--half">
+      <label class="visually-hidden" for="cf-email-confirm">メールアドレス 確認用再入力（必須）</label>
+      <input id="cf-email-confirm" name="email_confirm" type="email" placeholder="*メールアドレス(確認用再入力)" autocomplete="off" maxlength="200" required />
     </div>
 
     <div class="contact-form__field">
       <label class="visually-hidden" for="cf-message">ご相談・お問い合わせ（必須）</label>
-      <textarea id="cf-message" name="message" rows="6" placeholder="*ご相談・お問い合わせ" maxlength="5000" required></textarea>
+      <textarea id="cf-message" name="message" placeholder="*ご相談・お問い合わせ" maxlength="5000" required></textarea>
     </div>
 
     <!-- Spam protection: real users never see or fill this field. -->
@@ -55,9 +56,9 @@ const { action = '/api/contact.php' } = Astro.props;
     </div>
     <input type="hidden" name="form_started" value="" data-form-started />
 
-    <button class="contact-form__submit" type="submit" data-form-submit>
-      <span>送信</span>
-    </button>
+    <div class="contact-form__bottom">
+      <button class="contact-form__submit" type="submit" data-form-submit>送信</button>
+    </div>
   </form>
 </div>
 
@@ -68,75 +69,75 @@ const { action = '/api/contact.php' } = Astro.props;
 
 <style lang="scss">
   .contact-form {
+    background: $color-white;
+
     &__title {
-      margin-bottom: 1.75rem;
-      font-family: $font-body;
-      font-size: clamp(1.1rem, 2vw, 1.3125rem); // 21px
-      font-weight: 300;
-      letter-spacing: 1px;
+      padding-bottom: 16px;
+      @include font($font-body, 21px, 300, 3em, 1px);
       color: $color-navy;
     }
 
+    // Fields sit in a row pulled 3% left, each with 3% left padding, so the
+    // two half-width fields get a gutter while the edges line up.
     &__form {
-      display: grid;
-      gap: 1.5rem;
-    }
-
-    &__row {
-      display: grid;
-      gap: 1.5rem;
-
-      @include mq(md) {
-        grid-template-columns: 1fr 1fr;
-      }
+      display: flex;
+      flex-wrap: wrap;
+      margin-left: -3%;
     }
 
     &__field {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
+      width: 100%;
+      margin-bottom: 40px;
+      padding-left: 3%;
+
+      &--half {
+        width: 50%;
+
+        @include phone {
+          width: 100%;
+        }
+      }
 
       input,
       textarea {
+        display: block;
         width: 100%;
-        padding: 0.8rem 1rem;
+        padding: 16px;
         background: $color-white;
-        border: 1px solid $color-navy;
+        border: 1px solid $color-heading;
         border-radius: 0;
-        font-family: $font-body;
-        font-weight: 300;
-        font-size: 0.875rem;
-        letter-spacing: 1px;
-        color: $color-text;
-        transition:
-          border-color $transition-fast,
-          box-shadow $transition-fast;
+        @include font($font-body, 14px, 300, 1.3em, 1px);
+        color: $color-navy;
 
         &::placeholder {
-          color: rgba($color-navy, 0.7);
+          color: $color-navy;
+          opacity: 1;
         }
 
-        &:focus {
-          outline: none;
-          border-color: $color-teal;
-          box-shadow: 0 0 0 1px $color-teal;
+        &:focus-visible {
+          outline: 2px solid $color-teal;
+          outline-offset: -1px;
         }
 
         &[aria-invalid='true'] {
           border-color: $color-orange;
-          box-shadow: 0 0 0 1px $color-orange;
         }
       }
 
+      &--first input {
+        border-color: $color-navy;
+      }
+
       textarea {
+        height: 150px;
         resize: vertical;
-        min-height: 150px;
       }
     }
 
     // Error messages are inserted by JavaScript, so they need a global selector.
     :global(.contact-form__error) {
-      font-size: 0.8rem;
+      padding: 4px 0 0;
+      font-size: 13px;
       color: $color-orange;
     }
 
@@ -144,24 +145,45 @@ const { action = '/api/contact.php' } = Astro.props;
       @include visually-hidden;
     }
 
-    &__submit {
-      justify-self: end;
-      padding: 0.45rem 1.1rem;
-      background: $color-navy;
-      border: 1px solid $color-navy;
-      color: $color-white;
-      font-family: $font-body;
-      font-size: 1.0625rem; // 17px
-      font-weight: 500;
-      letter-spacing: 3px;
-      transition:
-        background $transition-base,
-        color $transition-base;
+    &__bottom {
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+      margin-top: -1.5%;
+    }
 
-      &:hover,
-      &:focus-visible {
-        background: $color-white;
-        color: $color-navy;
+    // Divi-style button: on hover the text shifts left and a chevron appears.
+    &__submit {
+      position: relative;
+      margin-left: 18px;
+      padding: 0.3em 1em;
+      background: $color-navy;
+      border: 2px solid $color-navy;
+      border-radius: 0;
+      @include font($font-body, 17px, 500, 1.7em, 3px);
+      color: $color-white;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &::after {
+        content: '›';
+        position: absolute;
+        top: 50%;
+        right: 0.35em;
+        font-size: 1.6em;
+        line-height: 1;
+        opacity: 0;
+        transform: translate(-0.3em, -55%);
+        transition: all 0.2s;
+      }
+
+      &:hover {
+        padding: 0.3em 2em 0.3em 0.7em;
+
+        &::after {
+          opacity: 1;
+          transform: translate(0, -55%);
+        }
       }
 
       &:disabled {
@@ -171,9 +193,9 @@ const { action = '/api/contact.php' } = Astro.props;
     }
 
     &__status {
-      margin-bottom: 1.5rem;
-      padding: 1rem 1.25rem;
-      font-size: 0.9rem;
+      margin-bottom: 24px;
+      padding: 16px 20px;
+      font-size: 14px;
       border-left: 4px solid $color-teal;
       background: rgba($color-teal, 0.12);
 

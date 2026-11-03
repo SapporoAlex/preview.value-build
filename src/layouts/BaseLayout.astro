@@ -56,11 +56,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
 <style lang="scss">
   // Pushes content below the header (fixed on desktop, 80px bar on mobile).
+  // The original's content starts 1px (desktop) / 2px (mobile) under the
+  // header's height, so it slightly tucks under the header.
   .site-main {
-    padding-top: $header-height;
+    padding-top: $header-height - 1px;
 
     @include tablet-down {
-      padding-top: $header-height-mobile - 1px;
+      padding-top: $header-height-mobile - 2px;
     }
   }
 </style>

@@ -1,16 +1,100 @@
 ---
+// Contact.
 import BaseLayout from '@layouts/BaseLayout.astro';
-import PageHeader from '@components/ui/PageHeader.astro';
-import Section from '@components/ui/Section.astro';
+import PhotoBand from '@components/ui/PhotoBand.astro';
 import ContactForm from '@components/sections/ContactForm.astro';
 ---
 
 <BaseLayout title="Contact" preloadImage="/images/photos/vb-003.jpeg">
-  <PageHeader title="Contact" subtitle="バリュービルドへのお問い合わせ" image="/images/photos/vb-003.jpeg">
-    <p>バリュービルドへのご質問やご相談、お問い合わせは下記のフォームより、お願い致します。担当者より返信させていただきます。</p>
-  </PageHeader>
+  <PhotoBand image="/images/photos/vb-003.jpeg" />
 
-  <Section narrow>
-    <ContactForm />
-  </Section>
+  <section class="sec page-title">
+    <div class="row page-title__row">
+      <div class="col col-4-4">
+        <h1 class="mod page-title__title">Contact</h1>
+        <p class="mod page-title__subtitle">バリュービルドへのお問い合わせ</p>
+        <p class="mod page-title__text">
+          バリュービルドへのご質問やご相談、お問い合わせは下記のフォームより、お願い致します。担当者より返信させていただきます。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec form">
+    <div class="row form__row">
+      <div class="col col-4-4">
+        <ContactForm class="mod" />
+      </div>
+    </div>
+  </section>
 </BaseLayout>
+
+<style lang="scss">
+  .page-title {
+    padding: 50px 0 35px;
+
+    @include phone {
+      padding-top: 30px;
+    }
+
+    &__row {
+      padding-left: 150px;
+      padding-right: 200px;
+
+      @include phone {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+
+    &__title {
+      padding-bottom: 20px;
+      @include text-page-title;
+      line-height: inherit;
+
+      @include phone {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    &__subtitle {
+      @include text-page-subtitle;
+      font-size: 17px;
+
+      @include phone {
+        padding-bottom: 10px;
+      }
+    }
+
+    &__text {
+      @include font($font-body, 15px, 300, 1.9em, 4px);
+      color: $color-navy;
+      text-align: justify;
+    }
+  }
+
+  .form {
+    padding: 10px 15px 50px;
+
+    @include phone {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    &__row {
+      padding-left: 150px;
+      padding-right: 150px;
+      padding-bottom: 100px;
+
+      @include phone {
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      // The form's <script> follows it, so the usual last-child reset misses it.
+      > .col > .mod {
+        margin-bottom: 0;
+      }
+    }
+  }
+</style>
