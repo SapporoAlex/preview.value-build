@@ -1,76 +1,52 @@
 ---
-// Entrepreneur testimonial. The text is folded to a short preview with a
-// centred "続きを読む" (read more) button, like the original site.
-// Without JavaScript the full text is simply shown.
+// Entrepreneur testimonial. The text is folded to a 64px preview with a
+// centred "続きを読む" (read more) control that unfolds it, as on the original
+// (a CSS-only checkbox; the checkbox stays focusable for keyboard users).
 import type { Testimonial } from '@data/invest';
+import Lines from '@components/ui/Lines.astro';
 
 interface Props {
   testimonial: Testimonial;
-  delay?: number;
+  id: string;
 }
 
-const { testimonial, delay = 0 } = Astro.props;
+const { testimonial, id } = Astro.props;
 ---
 
-<article
-  class:list={['testimonial', `testimonial--${testimonial.theme}`]}
-  data-reveal="up"
-  data-fold
-  style={`--reveal-delay: ${delay}ms`}
->
-  <header class="testimonial__header">
-    <h3 class="testimonial__company">{testimonial.company}</h3>
-    <p class="testimonial__person">{testimonial.person}</p>
-  </header>
-
-  <div class="testimonial__body prose" data-fold-body>
-    {testimonial.paragraphs.map((p) => <p>{p}</p>)}
+<div class:list={['testimonial mod', `testimonial--${testimonial.theme}`]}>
+  <div class:list={{ 'hide-tablet': testimonial.emptyOnTablet }}>
+    <p class="testimonial__who"><b>{testimonial.company}<br />{testimonial.person}</b></p>
+    <div class="testimonial__body">
+      <input class="testimonial__toggle" id={id} type="checkbox" />
+      {testimonial.phoneExtraLine && <span class="testimonial__gap hide-desktop hide-tablet"></span>}
+      <label class="testimonial__more" for={id}><span class="visually-hidden">{testimonial.company}の</span>続きを読む</label>
+      <div class="testimonial__text">
+        {
+          testimonial.textPhone ? (
+            <>
+              <span class="hide-phone"><Lines text={testimonial.text} /></span>
+              <span class="hide-desktop hide-tablet"><Lines text={testimonial.textPhone} /></span>
+            </>
+          ) : (
+            <Lines text={testimonial.text} />
+          )
+        }
+      </div>
+    </div>
   </div>
-
-  <button class="testimonial__toggle" type="button" aria-expanded="false" data-fold-toggle hidden>
-    <span data-fold-label>続きを読む</span>
-  </button>
-</article>
-
-<script>
-  // Progressive enhancement: fold each testimonial and show the toggle button.
-  document.querySelectorAll<HTMLElement>('[data-fold]').forEach((card) => {
-    const body = card.querySelector<HTMLElement>('[data-fold-body]');
-    const toggle = card.querySelector<HTMLButtonElement>('[data-fold-toggle]');
-    const label = card.querySelector<HTMLElement>('[data-fold-label]');
-    if (!body || !toggle || !label) return;
-
-    card.classList.add('is-folded');
-    toggle.hidden = false;
-
-    toggle.addEventListener('click', () => {
-      const expanded = toggle.getAttribute('aria-expanded') === 'true';
-      toggle.setAttribute('aria-expanded', String(!expanded));
-      card.classList.toggle('is-folded', expanded);
-      body.style.maxHeight = expanded ? '' : `${body.scrollHeight}px`;
-      label.textContent = expanded ? '続きを読む' : '閉じる';
-    });
-  });
-</script>
+</div>
 
 <style lang="scss">
   .testimonial {
-    // --bg / --fg are set by the colour theme modifiers below.
     --bg: #{$color-white};
-    --fg: #{$color-text};
 
-    position: relative;
-    padding: 1.8rem;
-    background: var(--bg);
-    color: var(--fg);
-    font-family: $font-accent;
-    font-size: 1rem;
+    padding: 1.8em;
     line-height: 1.8;
+    background: var(--bg);
 
-    // Colour themes (match the original cards)
     &--orange {
       --bg: #{$color-orange};
-      --fg: #{$color-white};
+      color: $color-white;
     }
 
     &--grey {
@@ -83,70 +59,82 @@ const { testimonial, delay = 0 } = Astro.props;
 
     &--black {
       --bg: #{$color-black};
-      --fg: #{$color-white};
-    }
-
-    &__company,
-    &__person {
-      font-family: $font-accent;
-      font-size: 1rem;
-      font-weight: 700;
-      line-height: 1.8;
-      letter-spacing: 0;
-    }
-
-    &__person {
-      margin: 0;
+      color: $color-white;
     }
 
     &__body {
       position: relative;
+    }
+
+    &__toggle {
+      @include visually-hidden;
+    }
+
+    // One empty line (phone versions of some boxes on the original).
+    &__gap {
+      display: block;
+      height: 1.8em;
+    }
+
+    // Folded text with a fade into the background colour at the bottom.
+    &__text {
+      position: relative;
+      max-height: 64px;
       margin-top: 1.2em;
-      font-weight: 500;
       overflow: hidden;
       transition: max-height 0.8s ease;
-    }
 
-    // Folded: a short preview that fades into the card colour.
-    &.is-folded &__body {
-      max-height: 64px;
-
-      &::after {
+      &::before {
         content: '';
         position: absolute;
-        inset: auto 0 0;
+        left: 0;
+        bottom: 0;
+        width: 100%;
         height: 40px;
-        background: linear-gradient(to bottom, transparent, var(--bg) 60%);
+        background: linear-gradient(
+          to bottom,
+          color-mix(in srgb, var(--bg) 0%, transparent) 0%,
+          color-mix(in srgb, var(--bg) 90%, transparent) 50%,
+          var(--bg) 100%
+        );
+        transition: opacity 0.5s ease;
       }
     }
 
-    // Centred "read more" button sitting over the fade.
-    &__toggle {
+    &__more {
+      position: absolute;
+      bottom: 0;
+      z-index: 10;
       display: block;
-      position: relative;
-      z-index: 1;
       width: 100%;
-      margin-top: -1.25rem;
-      padding: 0;
-      background: none;
-      border: 0;
-      font-family: $font-accent;
-      font-weight: 700;
-      font-size: 1rem;
-      color: inherit;
+      height: 1.5em;
       text-align: center;
-      transition: opacity $transition-base;
+      cursor: pointer;
+    }
 
-      &[hidden] {
-        display: none;
-      }
+    &--white &__more,
+    &--grey &__more {
+      color: $color-black;
+    }
 
-      &[aria-expanded='true'] {
-        margin-top: 1rem;
-      }
+    &--orange &__more,
+    &--black &__more {
+      color: $color-white;
+    }
 
-      &:hover {
-        opacity: 0.7;
+    &__toggle:focus-visible ~ &__more {
+      outline: 2px solid $color-teal;
+    }
+
+    &__toggle:checked ~ &__more {
+      display: none;
+    }
+
+    &__toggle:checked ~ &__text {
+      max-height: 1000px;
+
+      &::before {
+        opacity: 0;
       }
     }
   }

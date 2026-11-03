@@ -1,8 +1,24 @@
 @use '../abstracts' as *;
 
+// Base text styles — Divi defaults + the original theme options.
+
 body {
-  @include text-body;
+  font-family: $font-accent;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.7em;
+  color: $color-text;
   background: $color-white;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+p {
+  padding-bottom: 1em;
+
+  &:last-of-type {
+    padding-bottom: 0;
+  }
 }
 
 h1,
@@ -11,20 +27,40 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: $font-heading;
-  font-weight: 600;
-  line-height: 1.3;
-  color: inherit;
+  padding-bottom: 10px;
+  font-family: $font-label;
+  font-weight: 500;
+  line-height: 1em;
+  color: $color-heading;
 }
 
-p + p {
-  margin-top: 1em;
+h1 {
+  font-size: 30px;
+}
+
+h2 {
+  font-size: 26px;
+}
+
+h3 {
+  font-size: 22px;
+}
+
+h4 {
+  font-size: 18px;
+}
+
+h5 {
+  font-size: 16px;
+}
+
+h6 {
+  font-size: 14px;
 }
 
 a {
-  color: inherit;
+  color: $color-salmon;
   text-decoration: none;
-  transition: opacity $transition-base, color $transition-fast;
 }
 
 strong,
@@ -35,4 +71,12 @@ b {
 :focus-visible {
   outline: 2px solid $color-teal;
   outline-offset: 3px;
+}
+
+// Tablet + phone: the last paragraph of text blocks is left aligned
+// (site-wide rule on the original).
+@include tablet-down {
+  .text p:last-child {
+    text-align: left;
+  }
 }

@@ -1,126 +1,106 @@
 ---
-// Numbered "story" block on the About page, matching the original layout:
-//   - large headline that flips into view in 3D
-//   - image on the left, number + title + text on the right
-//   - a long teal diagonal line behind everything, cutting between the
-//     number ("001") and the title, and running up behind the headline
+// About page feature, desktop layout (≥ 981px):
+// large statement with a thin diagonal teal line behind it, then the photo
+// and the numbered text, overlapping the statement by 72px.
 import type { AboutFeature } from '@data/about';
-import DiagonalLine from '@components/ui/DiagonalLine.astro';
+import Lines from '@components/ui/Lines.astro';
 
 interface Props {
   feature: AboutFeature;
-  eager?: boolean; // first block on the page: load its image immediately (it's the main visible image)
+  minHeight?: string; // the last feature section has a minimum height on the original
 }
 
-const { feature, eager = false } = Astro.props;
+const { feature, minHeight } = Astro.props;
 ---
 
-<section id={feature.id} class="feature-story">
-  <div class="container">
-    <h2 class="feature-story__headline" data-reveal="flip">
-      {feature.headline.split('\n').map((line, i) => (i ? [<br />, line] : line))}
-    </h2>
-
-    <div class="feature-story__body">
-      <DiagonalLine class="feature-story__line" color="teal" angle={-38.5} length="673px" />
-
-      <div class="feature-story__media" data-reveal="fade">
-        <img src={feature.image} alt="" loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : undefined} />
-      </div>
-
-      <div class="feature-story__content" data-reveal="up" style="--reveal-delay: 150ms">
-        <p class="feature-story__number">{feature.number}</p>
-        <h3 class="feature-story__title">{feature.title}</h3>
-        <div class="feature-story__text prose">
-          {feature.paragraphs.map((p) => <p>{p}</p>)}
-        </div>
+<section class="sec feature hide-tablet hide-phone" id={feature.id} style={minHeight ? `min-height: ${minHeight}` : undefined}>
+  <div class="row feature__head">
+    <div class="col col-4-4">
+      <p class="mod feature__headline"><Lines text={feature.headline} /></p>
+      <div class="mod feature__line" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div class="row feature__body">
+    <div class="col col-1-2">
+      <div class="mod"><img src={feature.image} alt="" width="416" height="277" loading="lazy" /></div>
+    </div>
+    <div class="col col-1-2">
+      <p class="mod feature__number">{feature.number}</p>
+      <h3 class="mod feature__title"><Lines text={feature.title} /></h3>
+      <div class="mod feature__text">
+        {feature.paragraphs.map((p, i) => <p>{i === 0 && feature.firstParagraphSmall ? <span class="is-small">{p}</span> : p}</p>)}
+        {feature.trailingBlankLine && <p>&nbsp;</p>}
       </div>
     </div>
   </div>
 </section>
 
 <style lang="scss">
-  // Desktop measurements from the original: two 416px columns with a 48px gap,
-  // inset 100px from each side of the 1080px content area.
-  $inset: 100px;
-  $column-gap: 48px;
+  .feature {
+    margin-top: -100px;
 
-  .feature-story {
-    padding-block: $section-space;
-    overflow: hidden;
-    // Own stacking context, so the line (z-index: -1) sits behind the text
-    // but still in front of the section background.
-    isolation: isolate;
+    &__head,
+    &__body {
+      padding-left: 100px;
+      padding-right: 100px;
+    }
+
+    // The original overlaps by 72px, but its floated columns can't rise
+    // above the line above, so the photo starts right under it.
+    &__body {
+      margin-top: -4%;
+
+      @include wide {
+        margin-top: -54px;
+      }
+    }
 
     &__headline {
-      @include text-headline;
-      margin-bottom: 2.5rem;
-
-      @include mq(lg) {
-        padding-left: $inset;
-        margin-bottom: 3rem;
-      }
+      @include font($font-heading, 35px, 600, 1.5em, 4px);
     }
 
-    &__body {
+    // Divi divider module: 71% wide, right aligned, rotated 142° behind the content.
+    &__line {
       position: relative;
-      display: grid;
-      gap: 2rem;
-
-      @include mq(lg) {
-        grid-template-columns: 1fr 1fr;
-        gap: $column-gap;
-        padding-inline: $inset;
-        align-items: start;
-      }
-    }
-
-    // The line's lower-left end starts just left of the text column and
-    // 198px below the top of the image, then rises at 38.5° — so it passes
-    // between the number and the title, and on up behind the headline.
-    // DiagonalLine is a child component, so it is styled with :global()
-    // under the scoped __body (Astro scoped styles don't reach into children).
-    &__body :global(.feature-story__line) {
-      display: none;
       z-index: -1;
+      width: 71%;
+      height: 23px;
+      margin: 0 0 0 auto !important;
+      transform: scaleX(1.04) scaleY(1.04) rotateX(358deg) rotateY(0deg) rotateZ(142deg);
 
-      @include mq(lg) {
-        display: block;
-        top: 198px;
-        left: calc(50% + #{$column-gap * 0.5} - 160px);
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        border-top: 2px solid $color-teal;
       }
     }
 
-    &__media img {
+    img {
       width: 100%;
-      aspect-ratio: 3 / 2;
-      object-fit: cover;
+      height: auto;
     }
 
     &__number {
-      font-family: $font-heading;
-      font-size: 1.0625rem; // 17px
-      font-weight: 600;
-      line-height: 1.6;
-      letter-spacing: 2px;
-      color: $color-text;
+      @include font($font-heading, 17px, 600, null, 2px);
     }
 
     &__title {
-      margin-top: 1.5rem;
-      font-family: $font-body;
-      font-size: clamp(1.1rem, 2vw, 1.375rem); // 22px
-      font-weight: 500;
-      line-height: 1.6;
-      letter-spacing: 2px;
+      padding-bottom: 0;
+      background: $color-white;
+      @include font($font-body, 22px, 500, 1.8em, 2px);
       color: $color-text;
     }
 
     &__text {
-      @include text-body;
-      margin-top: 1.5rem;
-      font-size: 0.9375rem;
-      letter-spacing: 1px;
+      @include font($font-body, 16px, 300, 1.8em, 1px);
+
+      .is-small {
+        font-size: 14px;
+      }
     }
   }
 </style>

@@ -1,0 +1,47 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ==========================================================================
+// Text styles that repeat across pages (values from the original site).
+// Use in components:  .title { @include text-label; }
+// ==========================================================================
+
+// Orange page title under the banner of inner pages ("About Us", "Q&A").
+@mixin text-page-title {
+  @include font($font-heading, 45px, 600, null, 6px);
+  color: $color-orange;
+  text-align: center;
+}
+
+// Navy line under the page title ("バリュービルドについて").
+@mixin text-page-subtitle {
+  @include font($font-body, 18px, 300, null, 3px);
+  color: $color-navy;
+  text-align: center;
+}
+
+// Very large dark heading ("COMPANY INFO & OUR TEAM", "8 Steps").
+@mixin text-display {
+  @include font($font-heading, 61px, 600, 1.2em, 4px);
+  color: $color-text;
+}
+
+// Orange spaced label: "About Us", "Our Partners", "Our Team".
+@mixin text-label {
+  @include font($font-heading, 21px, 600, null, 6px);
+  color: $color-orange;
+  text-align: center;
+}
+
+// Navy sub-heading under a label: "スタートアップへのエンジェル投資を行います。"
+@mixin text-lead {
+  @include font($font-body, 18px, 500, 1.9em, 3px);
+  color: $color-navy;
+  text-align: center;
+}
+
+// Light navy body copy with wide spacing (intro paragraphs).
+@mixin text-intro {
+  @include font($font-body, 15px, 300, 1.9em, 4px);
+  color: $color-navy;
+}

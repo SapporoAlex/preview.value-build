@@ -1,58 +1,93 @@
 // ==========================================================================
 // Design tokens
-// Change a value here and it updates everywhere on the site.
-// Values are taken from the original WordPress/Divi site.
+// Values are taken from the original WordPress/Divi site (theme options,
+// page styles and computed styles), so the rebuild renders the same.
 // ==========================================================================
 
 // --- Brand colours --------------------------------------------------------
-$color-navy: #163042; // brand navy: subtitles, intro text, footer background
-$color-orange: #e2583b; // page titles, section labels, accents
-$color-teal: #75baad; // active nav link, decorative lines, accents
+$color-navy: #163042; // brand navy: titles, intro text, footer background
+$color-orange: #e2583b; // section labels, page titles, accents
+$color-teal: #75baad; // active nav link, accents
 $color-mint: #29c4a9; // gradient end colour
+$color-green-dark: #176d5f; // IPO pill gradient end colour
+$color-salmon: #ec9481; // theme link colour, dropdown top border
 
 $color-white: #fff;
 $color-black: #000;
 $color-grey-light: #f2f2f2; // light section backgrounds
-$color-grey-lighter: #f7f7f7; // open accordion background
-$color-border: #c6c6c6;
+$color-grey-tag: #eee; // partner name tags
+$color-divi-blue: #2ea3f2; // Divi default accent: mobile menu icon + border
 
 // --- Text colours ---------------------------------------------------------
-$color-text: #282828; // default body text (dark grey, not black)
-$color-text-strong: #333; // small sub-headings, names, accordion questions
-$color-text-muted: #aaa; // job titles
+$color-text: #282828; // body text
+$color-heading: #333; // Divi default heading colour
 $color-nav: #042034; // header navigation links
 
 // --- Fonts ----------------------------------------------------------------
-$font-heading: 'Montserrat', 'Helvetica Neue', Arial, sans-serif; // titles
-$font-body: 'Noto Sans JP', 'Helvetica Neue', Arial, sans-serif; // most text
-$font-accent: 'Josefin Sans', 'Helvetica Neue', Arial, sans-serif; // bios, cards, testimonials
-$font-label: 'Share Tech', 'Helvetica Neue', Arial, sans-serif; // partner name tags
-$font-nav: 'Helvetica Neue', Arial, sans-serif; // header menu (original used a system sans-serif)
+// Same stacks as the original. Headings default to Share Tech, body to
+// Josefin Sans (theme options); most modules override with Noto Sans JP
+// or Montserrat.
+$font-heading: 'Montserrat', Helvetica, Arial, Lucida, sans-serif;
+$font-body: 'Noto Sans JP', Helvetica, Arial, Lucida, sans-serif;
+$font-accent: 'Josefin Sans', Helvetica, Arial, Lucida, sans-serif;
+$font-label: 'Share Tech', Helvetica, Arial, Lucida, sans-serif;
+// The original asks for "Noto Sans Japanese", which never loads, so the
+// header really renders in the system sans-serif.
+$font-nav: 'Noto Sans Japanese', sans-serif;
 
-$font-size-base: 1rem; // 16px
-$line-height-base: 1.7;
+// --- Layout (Divi grid) ---------------------------------------------------
+$row-width: 80%;
+$row-max: 1080px;
 
-// --- Layout ---------------------------------------------------------------
-$container-max: 1080px; // the original content width
-$container-narrow: 800px;
-$gutter: 1.25rem; // horizontal page padding on small screens
-$header-height: 64px;
-$header-padding-x: clamp(1rem, 2.5vw, 2.25rem); // logo / menu distance from screen edge
-
-// Vertical rhythm for sections
-$section-space: clamp(3rem, 7vw, 5.5rem);
-$section-space-sm: clamp(1.75rem, 4vw, 3rem);
-
-// --- Breakpoints (mobile first, used with the `mq` mixin) -----------------
-$breakpoints: (
-  sm: 480px,
-  md: 768px,
-  lg: 981px,
-  xl: 1280px,
+// Divi's default "gutter width 3" column widths.
+$col-gap: 5.5%;
+$col-widths: (
+  '1-2': 47.25%,
+  '1-3': 29.6667%,
+  '2-3': 64.833%,
+  '1-4': 20.875%,
+  '3-4': 73.625%,
+  '1-5': 15.6%,
+  '2-5': 36.7%,
+  '3-5': 57.8%,
+  '1-6': 12.083%,
+);
+// Module bottom margin inside each column type (desktop).
+$module-gaps: (
+  '4-4': 2.75%,
+  '3-4': 3.735%,
+  '2-3': 4.242%,
+  '3-5': 4.758%,
+  '1-2': 5.82%,
+  '2-5': 7.493%,
+  '1-3': 9.27%,
+  '1-4': 13.174%,
+  '1-5': 17.628%,
+  '1-6': 22.759%,
+);
+// …and inside narrow-gutter rows (Divi "gutter width 2").
+$module-gaps-narrow: (
+  '4-4': 1.5%,
+  '3-4': 2.02%,
+  '2-3': 2.284%,
+  '1-2': 3.093%,
+  '1-3': 4.787%,
+  '1-4': 6.593%,
+  '1-5': 8.523%,
+  '1-6': 10.588%,
 );
 
+// --- Header ----------------------------------------------------------------
+$header-height: 64px; // desktop, before scrolling
+$header-height-fixed: 54px; // desktop, after scrolling
+$header-height-mobile: 80px;
+
+// --- Breakpoints (Divi) ----------------------------------------------------
+$bp-small: 479px; // phones in portrait (≤ 479)
+$bp-phone: 767px; // phones (≤ 767)
+$bp-tablet: 980px; // tablets (≤ 980)
+$bp-wide: 1350px; // wide desktops (≥ 1350) use fixed px spacing
+
 // --- Effects --------------------------------------------------------------
-$shadow-card: 0 2px 18px rgba($color-black, 0.12);
-$transition-fast: 0.25s ease;
 $transition-base: 0.4s ease-in-out;
 $ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);

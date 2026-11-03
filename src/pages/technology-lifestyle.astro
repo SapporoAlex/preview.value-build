@@ -1,47 +1,209 @@
 ---
+// Technologies & Lifestyle. Desktop and tablet/phone use different layouts
+// and slightly different company lists, as on the original (see the data file).
 import BaseLayout from '@layouts/BaseLayout.astro';
-import PageHeader from '@components/ui/PageHeader.astro';
-import Section from '@components/ui/Section.astro';
-import SectionTitle from '@components/ui/SectionTitle.astro';
-import LogoCard from '@components/cards/LogoCard.astro';
+import PageBanner from '@components/ui/PageBanner.astro';
+import TechTile from '@components/cards/TechTile.astro';
+import TechMobileTile from '@components/cards/TechMobileTile.astro';
 import OtherCategories from '@components/sections/OtherCategories.astro';
-import { techJapan, techOverseas } from '@data/portfolio';
+import { techDesktop, techOverseasDesktop, techMobile, techOverseasMobile } from '@data/portfolio';
 
-// Sector pills cycle through the brand colours.
-const tones = ['navy', 'teal', 'orange'] as const;
+const intro =
+  'バリュービルドでは、長年にわたり、IT関連企業への投資を積極的に行なっています。すでに上場を果たした企業もあり、海外のIT関連ファンドも含め、幅広いネットワークを築いてきました。また、IT関連企業だけではなく、製造業や福祉事業などの人々の生活に欠かせない分野にも投資を行なっています。「仕事は社会貢献である」という観点から、人々にとってなくてはならない産業、また、世の中の課題を解決する革新的なアイデアに注目しています。';
 ---
 
 <BaseLayout title="Technologies & Lifestyle" preloadImage="/images/photos/vb-004.jpeg">
-  <PageHeader title="Technologies & Lifestyle" subtitle="テクノロジーとライフスタイル" image="/images/photos/vb-004.jpeg">
-    <p>
-      バリュービルドでは、長年にわたり、IT関連企業への投資を積極的に行なっています。すでに上場を果たした企業もあり、海外のIT関連ファンドも含め、幅広いネットワークを築いてきました。また、IT関連企業だけではなく、製造業や福祉事業などの人々の生活に欠かせない分野にも投資を行なっています。「仕事は社会貢献である」という観点から、人々にとってなくてはならない産業、また、世の中の課題を解決する革新的なアイデアに注目しています。
-    </p>
-  </PageHeader>
+  <PageBanner image="/images/photos/vb-004.jpeg" />
 
-  <Section>
-    <SectionTitle title="In Japan" />
-    <div class="grid grid--5 logo-grid">
-      {techJapan.map((c, i) => <LogoCard name={c.name} logo={c.logo} url={c.url} caption={c.sector} captionTone={tones[i % 3]} />)}
-    </div>
-
-    <div class="overseas">
-      <SectionTitle title="Overseas" />
-      <div class="grid grid--5 logo-grid">
-        {techOverseas.map((c, i) => <LogoCard name={c.name} logo={c.logo} url={c.url} caption={c.sector} captionTone={tones[(i + 1) % 3]} />)}
+  <section class="sec page-title">
+    <div class="row page-title__row">
+      <div class="col col-4-4">
+        <h1 class="mod page-title__title">Technologies&amp; Lifestyle</h1>
+        <p class="mod page-title__subtitle">テクノロジーとライフスタイル</p>
       </div>
     </div>
-  </Section>
+    <div class="row intro hide-tablet hide-phone">
+      <div class="col col-4-4"><p class="mod intro__text">{intro}</p></div>
+    </div>
+    <!-- On desktop this row stays as an empty spacer (only its text is hidden). -->
+    <div class="row">
+      <div class="col col-4-4"><p class="mod intro__text intro__text--mobile hide-desktop">{intro}</p></div>
+    </div>
+  </section>
 
-  <OtherCategories current="technology" />
+  <section class="sec companies" id="blurb-tabs">
+    <div class="row companies__head">
+      <div class="col col-4-4"><h2 class="mod companies__label">In Japan</h2></div>
+    </div>
+
+    <!-- Desktop: rows of five -->
+    {
+      techDesktop.map((row, r) => (
+        <div class:list={['row tech-row hide-tablet hide-phone', { 'tech-row--first': r === 0 }]}>
+          {row.map((company) => (
+            <div class:list={['col tech-col', { 'tech-col--no-gutter': company.noGutter }]}>
+              <TechTile company={company} />
+            </div>
+          ))}
+          {row.length < 5 && <div class="col tech-col" />}
+        </div>
+      ))
+    }
+
+    <!-- Tablet + phone: two columns -->
+    <div class="row row--flex tech-m hide-desktop">
+      <div class="col col-1-2 tech-m__col tech-m__col--left">{techMobile.left.map((item) => <TechMobileTile item={item} />)}</div>
+      <div class="col col-1-2 tech-m__col tech-m__col--right">{techMobile.right.map((item) => <TechMobileTile item={item} />)}</div>
+    </div>
+
+    <div class="row companies__head companies__head--overseas">
+      <div class="col col-4-4"><h2 class="mod companies__label">Overseas</h2></div>
+    </div>
+    <div class="row tech-row hide-tablet hide-phone">
+      {techOverseasDesktop.map((company) => <div class="col tech-col"><TechTile company={company} /></div>)}
+    </div>
+    {
+      techOverseasMobile.map(([left, right]) => (
+        <div class="row row--flex tech-m hide-desktop">
+          <div class="col col-1-2 tech-m__col tech-m__col--left"><TechMobileTile item={left} /></div>
+          <div class="col col-1-2 tech-m__col tech-m__col--right"><TechMobileTile item={right} /></div>
+        </div>
+      ))
+    }
+  </section>
+
+  <OtherCategories
+    flushTop
+    fade
+    minHeight="464px"
+    cards={[
+      { key: 'tourism', accent: 'orange', padX: 64, padPhone: [50, 43] },
+      { key: 'real-estate', accent: 'teal', padX: 64, padPhone: [50, 50] },
+      { key: 'startups-real-estate', accent: 'orange', padX: 40, padPhone: [36, 36] },
+    ]}
+  />
 </BaseLayout>
 
 <style lang="scss">
-  .logo-grid {
-    gap: 2.5rem 1.25rem;
-    align-items: start;
+  // --- Title + intro -------------------------------------------------------------
+  .page-title {
+    margin-bottom: -180px;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    @include phone {
+      margin-bottom: -100px;
+      padding: 50px 10px 0;
+    }
+
+    &__row {
+      padding-left: 200px;
+      padding-right: 200px;
+
+      @include tablet-down {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+
+    &__title {
+      padding-bottom: 0;
+      @include text-page-title;
+      font-size: 35px;
+      line-height: 1.2em;
+      letter-spacing: 2px;
+
+      @include phone {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    &__subtitle {
+      @include text-page-subtitle;
+      font-size: 17px;
+
+      @include phone {
+        padding-bottom: 10px;
+      }
+    }
   }
 
-  .overseas {
-    margin-top: $section-space;
+  .intro {
+    padding-top: 1px;
+
+    &__text {
+      padding: 0 10px;
+      @include text-intro;
+      text-align: center;
+
+      &--mobile {
+        padding: 0;
+        text-align: left;
+      }
+    }
+  }
+
+  // --- Company tiles -------------------------------------------------------------
+  .companies {
+    margin-bottom: 50px;
+    padding: 0 10px;
+
+    @include phone {
+      padding: 0;
+    }
+
+    &__head {
+      margin-top: 100px;
+
+      @include phone {
+        margin-top: 122px;
+      }
+
+      &--overseas {
+        padding-top: 28px;
+
+        @include phone {
+          margin-top: 5px;
+        }
+      }
+    }
+
+    &__label {
+      margin-bottom: 1px !important;
+      padding-bottom: 0;
+      @include text-label;
+      line-height: inherit;
+    }
+  }
+
+  // Desktop rows: five 17.6% columns with 3% gutters.
+  .tech-row {
+    &--first {
+      width: 100%;
+    }
+  }
+
+  .tech-col {
+    @include desktop {
+      width: 17.6%;
+      margin-right: 3%;
+
+      &:last-child,
+      &--no-gutter {
+        margin-right: 0;
+      }
+    }
+  }
+
+  // Tablet/phone: two columns sharing one line, 3% gutter.
+  .tech-m {
+    &__col--left {
+      margin-right: 3%;
+      padding-right: 9px;
+    }
+
+    &__col--right {
+      padding-left: 9px;
+    }
   }
 </style>

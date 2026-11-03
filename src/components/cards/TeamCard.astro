@@ -1,83 +1,71 @@
 ---
-// Team member profile card (About page).
+// Team member profile (About page): oval portrait, name, role, location and bio.
+// Card padding/background differ per card, so the page sets them via `class`.
+import type { HTMLAttributes } from 'astro/types';
 import type { TeamMember } from '@data/about';
 
-interface Props {
+interface Props extends HTMLAttributes<'div'> {
   member: TeamMember;
-  delay?: number;
 }
 
-const { member, delay = 0 } = Astro.props;
+const { member, class: className, ...rest } = Astro.props;
+const [width, height] = member.photoSize;
 ---
 
-<article class="team-card" data-reveal="up" style={`--reveal-delay: ${delay}ms`}>
+<div class:list={['team-card', className]} {...rest}>
   <div class="team-card__photo">
-    <img src={member.photo} alt={member.name} loading="lazy" />
+    <img src={member.photo} alt={member.name} width={width} height={height} loading="lazy" />
   </div>
-  <h3 class="team-card__name">{member.name}</h3>
+  <h4 class="team-card__name">{member.name}</h4>
   <p class="team-card__role">{member.role}</p>
-  <p class="team-card__location">{member.location}</p>
-  <div class="team-card__bio prose">
+  <div class="team-card__bio">
+    <p class:list={['team-card__location', { 'is-left-mobile': member.locationLeftOnMobile }]}>{member.location}</p>
     {member.bio.map((p) => <p>{p}</p>)}
   </div>
-</article>
+</div>
 
 <style lang="scss">
   .team-card {
+    height: 100%;
+    letter-spacing: 1px;
+    text-align: center;
+
+    // Oval portrait, 250px wide even when the card is narrower (as on the
+    // original), full card width on tablets.
     &__photo {
-      width: min(100%, 220px);
-      aspect-ratio: 1;
-      margin: 0 auto 1.25rem;
-      border-radius: 50%;
+      width: 250px;
+      margin: 0 auto 20px;
       overflow: hidden;
-      background: $color-grey-light;
+      border-radius: 190px;
+      line-height: 0;
+
+      @include tablet {
+        width: auto;
+        margin: 0 0 12px;
+      }
 
       img {
         width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.8s $ease-out;
+        height: auto;
       }
     }
 
-    &:hover &__photo img {
-      transform: scale(1.06);
-    }
-
     &__name {
-      font-family: $font-heading;
-      font-size: 1.125rem; // 18px
-      font-weight: 500;
-      letter-spacing: 1px;
-      text-align: center;
-      color: $color-text-strong;
-    }
-
-    &__role,
-    &__location,
-    &__bio {
-      font-family: $font-accent;
-      font-weight: 500;
-      font-size: 1rem;
-      letter-spacing: 1px;
-      line-height: 1.8;
+      @include font($font-heading, 18px, 500, null, 1px);
     }
 
     &__role {
-      margin-top: 0.25rem;
-      text-align: center;
-      color: $color-text-muted;
+      color: #aaa;
     }
 
-    &__location {
-      margin-top: 0;
-      text-align: center;
-      color: $color-text;
+    &__bio p:not(.team-card__location) {
+      text-align: left;
     }
 
-    &__bio {
-      margin-top: 1rem;
-      color: $color-text;
+    .is-left-mobile {
+      @include tablet-down {
+        text-align: left;
+      }
     }
   }
 </style>

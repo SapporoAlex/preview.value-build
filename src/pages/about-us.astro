@@ -1,71 +1,224 @@
 ---
+// About page. Desktop shows the FeatureStory layout; tablets and phones show
+// FeatureCard instead (as on the original). Anchors: #aboutus001–003 and
+// #company-info (desktop), #aboutusmb001–003 and #company-infomb (mobile).
 import BaseLayout from '@layouts/BaseLayout.astro';
-import PageHeader from '@components/ui/PageHeader.astro';
-import Section from '@components/ui/Section.astro';
-import SectionTitle from '@components/ui/SectionTitle.astro';
+import PageBanner from '@components/ui/PageBanner.astro';
+import Lines from '@components/ui/Lines.astro';
 import FeatureStory from '@components/sections/FeatureStory.astro';
+import FeatureCard from '@components/sections/FeatureCard.astro';
 import TeamCard from '@components/cards/TeamCard.astro';
 import { aboutFeatures, companyProfile, team } from '@data/about';
 ---
 
 <BaseLayout title="About us" preloadImage="/images/photos/vb-010.jpeg">
-  <PageHeader title="About Us" subtitle="バリュービルドについて" image="/images/photos/vb-010.jpeg" />
+  <PageBanner image="/images/photos/vb-010.jpeg" />
 
-  {aboutFeatures.map((feature, i) => <FeatureStory feature={feature} eager={i === 0} />)}
-
-  <Section id="company-info" background="grey">
-    <SectionTitle variant="display" title="COMPANY INFO & OUR TEAM" reveal="flip" />
-    <div class="company" data-reveal="up">
-      <h3 class="company__heading">会社概要</h3>
-      <ul class="company__list" role="list">
-        {companyProfile.map((line) => <li>{line}</li>)}
-      </ul>
+  <section class="sec page-title">
+    <div class="row page-title__row">
+      <div class="col col-4-4">
+        <h1 class="mod page-title__title">About Us</h1>
+        <p class="mod page-title__subtitle">バリュービルドについて</p>
+      </div>
     </div>
-  </Section>
+  </section>
 
-  <Section>
-    <SectionTitle title="Our Team" />
-    <div class="team-grid">
-      {team.map((member, i) => <TeamCard member={member} delay={i * 120} />)}
+  {
+    aboutFeatures.map((feature, i) => (
+      <>
+        <FeatureCard feature={feature} first={i === 0} />
+        <FeatureStory feature={feature} minHeight={i === aboutFeatures.length - 1 ? '781.8px' : undefined} />
+      </>
+    ))
+  }
+
+  <!-- Company profile -->
+  <section class="sec company" id="company-info">
+    <div class="row" id="company-infomb">
+      <div class="col col-4-4">
+        <h2 class="mod company__title"><Lines text={companyProfile.title} /></h2>
+      </div>
     </div>
-  </Section>
+    <div class="row company__row">
+      <div class="col col-4-4 company__col">
+        <div class="mod company__text">
+          <h3>{companyProfile.heading}</h3>
+          {companyProfile.lines.map((line) => <p>{line.small ? <span class="is-small">{line.text}</span> : line.text}</p>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team: desktop (4 across) -->
+  <section class="sec team hide-tablet hide-phone">
+    <div class="row">
+      <div class="col col-4-4"><h2 class="mod team__label">Our Team</h2></div>
+    </div>
+    <div class="row row--flex row--g1 team__row">
+      {
+        team.map((member, i) => (
+          <div class="col col-1-4">
+            <TeamCard class:list={['team__card', `team__card--d${i + 1}`]} member={member} />
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Team: tablet (2 × 2) and phone (stacked) -->
+  <section class="sec team team--mobile hide-desktop">
+    <div class="row">
+      <div class="col col-4-4"><h2 class="mod team__label">Our Team</h2></div>
+    </div>
+    <div class="row team__row team__row--mobile">
+      {
+        team.map((member, i) => (
+          <div class="col col-1-4">
+            <TeamCard class:list={['team__card team__card--m', { 'team__card--plain': i === team.length - 1 }]} member={member} />
+          </div>
+        ))
+      }
+    </div>
+  </section>
 </BaseLayout>
 
 <style lang="scss">
-  .company {
-    &__heading {
-      font-family: $font-body;
-      font-size: 1.3125rem; // 21px
-      font-weight: 500;
-      letter-spacing: 3px;
-      color: $color-text-strong;
+  // --- Title ------------------------------------------------------------------
+  .page-title {
+    &__row {
+      padding-left: 200px;
+      padding-right: 200px;
+
+      @include phone {
+        padding-left: 0;
+        padding-right: 0;
+      }
     }
 
-    &__list {
-      margin: 1rem 0 0;
+    &__title {
+      margin-bottom: 0 !important;
+      padding-bottom: 20px;
+      @include text-page-title;
+      line-height: 1.2em;
+    }
 
-      li {
-        padding-block: 0.4rem;
-        font-family: $font-body;
-        font-weight: 300;
-        font-size: 0.875rem;
-        letter-spacing: 1px;
-        color: $color-text;
+    &__subtitle {
+      @include text-page-subtitle;
+
+      @include phone {
+        padding-bottom: 10px;
       }
     }
   }
 
-  // Team: 1 column on phones, 2 on tablets, 4 on desktop.
-  .team-grid {
-    display: grid;
-    gap: 3rem 2rem;
+  // --- Company profile -------------------------------------------------------------
+  .company {
+    padding: 30px 10px;
+    background: $color-grey-light;
 
-    @include mq(sm) {
-      grid-template-columns: repeat(2, 1fr);
+    &__title {
+      padding-bottom: 0;
+      @include text-display;
+      text-transform: uppercase;
+
+      @include tablet {
+        font-size: 46px;
+      }
+
+      @include phone {
+        font-size: 40px;
+      }
     }
 
-    @include mq(lg) {
-      grid-template-columns: repeat(4, 1fr);
+    &__row {
+      margin-top: 0;
+      padding-top: 0;
+    }
+
+    &__col {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    &__text {
+      padding-bottom: 4px;
+      @include font($font-body, null, 300, null, 1px);
+
+      @include phone {
+        margin-top: 18px;
+      }
+
+      h3 {
+        @include font($font-body, 21px, 500, 2em, 3px);
+      }
+
+      .is-small {
+        font-size: 14px;
+      }
+    }
+  }
+
+  // --- Team ----------------------------------------------------------------------------
+  .team {
+    padding: 4% 80px;
+
+    &--mobile {
+      padding: 4% 20px;
+    }
+
+    &__label {
+      padding-bottom: 0;
+      @include text-label;
+      line-height: inherit;
+    }
+
+    &__row {
+      width: 100%;
+      max-width: 1349px;
+    }
+
+    &__row--mobile {
+      display: flex;
+      flex-wrap: wrap;
+
+      > .col {
+        width: 50%;
+        margin: 0;
+
+        @include phone {
+          width: 100%;
+        }
+      }
+    }
+
+    &__card {
+      background: $color-white;
+
+      &--d1 {
+        padding: 20px 20px 40px;
+      }
+
+      &--d2 {
+        padding: 20px 20px 33px;
+      }
+
+      &--d3 {
+        padding: 20px;
+      }
+
+      &--d4 {
+        padding: 20px;
+        background: none;
+      }
+
+      &--m {
+        padding: 40px 20px;
+      }
+
+      &--plain {
+        background: none;
+      }
     }
   }
 </style>

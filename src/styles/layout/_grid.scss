@@ -1,0 +1,271 @@
+@use 'sass:map';
+@use '../abstracts' as *;
+
+// ==========================================================================
+// Page grid — reproduces the Divi layout model of the original site so
+// spacing and responsive behaviour match exactly.
+//
+//   <section class="sec">                    full-width band (vertical padding)
+//     <div class="row">                       centred 80% / max 1080px
+//       <div class="col col-1-2">              column (stacks on ≤ 980px)
+//         <div class="mod">…</div>             module (bottom margin between)
+//
+// Row modifiers:
+//   .row--4col   four ¼ columns become 2 × 2 on tablets (Divi behaviour)
+//   .row--g1     no gutter (columns touch)
+//   .row--g2     narrow gutter (3%)
+//   .row--flex   flex row on every screen size: columns stretch to equal
+//                height and shrink to share one line (never wrap)
+// ==========================================================================
+
+// --- Section ----------------------------------------------------------------
+.sec {
+  position: relative;
+  padding: 4% 0;
+  background-color: $color-white;
+  background-position: 50%;
+  background-size: cover;
+
+  @include wide {
+    padding: 54px 0;
+  }
+
+  @include tablet-down {
+    padding: 50px 0;
+  }
+}
+
+// --- Row --------------------------------------------------------------------
+.row {
+  position: relative;
+  width: $row-width;
+  max-width: $row-max;
+  margin: auto;
+  padding: 2% 0;
+
+  @include wide {
+    padding: 27px 0;
+  }
+
+  @include tablet-down {
+    padding: 30px 0;
+  }
+
+  // Columns sit side by side and keep their own height, like Divi's floats.
+  @include desktop {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  &--flex {
+    display: flex;
+    align-items: stretch;
+  }
+}
+
+// --- Columns -----------------------------------------------------------------
+.col {
+  position: relative;
+  z-index: 2; // each column is its own layer, as in Divi
+  min-height: 1px;
+  background-position: 50%;
+  background-size: cover;
+
+  // Columns may shrink inside .row--flex (as on the original, where two
+  // full-width tablet columns share one line).
+  flex: 0 1 auto;
+
+  @include desktop {
+    margin-right: $col-gap;
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    @each $name, $width in $col-widths {
+      &.col-#{$name} {
+        width: $width;
+      }
+    }
+  }
+
+  @include tablet-down {
+    width: 100%;
+    margin-bottom: 30px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // Empty spacer columns only exist on desktop.
+  &--empty {
+    @include tablet-down {
+      display: none;
+    }
+  }
+}
+
+.col-4-4 {
+  width: 100%;
+}
+
+// Four ¼ columns → 2 per line on tablets, 1 per line on small phones.
+.row--4col {
+  @include tablet-down {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    > .col-1-4 {
+      width: 47.25%;
+      margin-right: 5.5%;
+
+      &:nth-child(2n) {
+        margin-right: 0;
+      }
+
+      &:nth-last-child(-n + 2) {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  @include small {
+    > .col-1-4 {
+      width: 100%;
+      margin: 0 0 30px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+// Gutter variants (.row.row--g1 so its zero module margins beat the
+// column-type margins further down).
+.row.row--g1 > .col {
+  margin-bottom: 0;
+
+  @include desktop {
+    margin-right: 0;
+
+    &.col-1-2 {
+      width: 50%;
+    }
+
+    &.col-1-3 {
+      width: 33.3333%;
+    }
+
+    &.col-1-4 {
+      width: 25%;
+    }
+  }
+
+  > .mod {
+    margin-bottom: 0;
+  }
+}
+
+// No-gutter four-column rows: 2 × 50% on tablets.
+.row--g1.row--4col > .col-1-4 {
+  @include tablet-down {
+    width: 50%;
+    margin: 0;
+  }
+
+  @include small {
+    width: 100%;
+  }
+}
+
+.row--g2 > .col {
+  @include desktop {
+    margin-right: 3%;
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    &.col-1-2 {
+      width: 48.5%;
+    }
+
+    &.col-1-3 {
+      width: 31.3333%;
+    }
+
+    &.col-1-4 {
+      width: 22.75%;
+    }
+
+    &.col-1-5 {
+      width: 17.6%;
+    }
+
+    &.col-1-6 {
+      width: 14.1667%;
+    }
+  }
+}
+
+// --- Modules -------------------------------------------------------------------
+.mod {
+  position: relative;
+  overflow-wrap: break-word;
+
+  // A paragraph used directly as a module is the only text in it
+  // (Divi wraps each one), so it never gets the between-paragraph gap.
+  &:is(p) {
+    padding-bottom: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  @include tablet-down {
+    margin-bottom: 30px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+@include desktop {
+  @each $name, $gap in $module-gaps {
+    .col-#{$name} > .mod:not(:last-child) {
+      margin-bottom: $gap;
+    }
+  }
+
+  // Narrow-gutter rows use smaller gaps between modules.
+  @each $name, $gap in $module-gaps-narrow {
+    .row--g2 > .col-#{$name} > .mod:not(:last-child) {
+      margin-bottom: $gap;
+    }
+  }
+}
+
+// --- Responsive visibility -------------------------------------------------------
+// The original shows different versions of some blocks per device.
+.hide-desktop {
+  @include desktop {
+    display: none !important;
+  }
+}
+
+.hide-tablet {
+  @include tablet {
+    display: none !important;
+  }
+}
+
+.hide-phone {
+  @include phone {
+    display: none !important;
+  }
+}

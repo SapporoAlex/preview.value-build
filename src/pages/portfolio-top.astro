@@ -1,28 +1,312 @@
 ---
+// Portfolio overview. Desktop: photo + overlapping text card per category,
+// alternating sides, with a thin angled line above each card. Tablet/phone:
+// a stacked version with smaller photos and cards with an offset shadow.
 import BaseLayout from '@layouts/BaseLayout.astro';
-import PageHeader from '@components/ui/PageHeader.astro';
-import Section from '@components/ui/Section.astro';
-import CategoryShowcase from '@components/sections/CategoryShowcase.astro';
+import PageBanner from '@components/ui/PageBanner.astro';
+import SlideCard from '@components/cards/SlideCard.astro';
 import { categories } from '@data/portfolio';
+
+const intro =
+  'バリュービルドのポートフォリオは、IT関連、サービス業、福祉関連、製造業、Eコマース、不動産など多岐に渡ります。分野に特定することなく、起業家の熱意、ビジネスモデルの優位性、市場動向をベースに投資判断を行います。是非、あなたのビジネスアイディアを教えてください。';
+
+const card = (c: (typeof categories)[number]) => ({
+  title: c.overviewTitle ?? c.title,
+  text: c.summary,
+  href: c.href,
+  rule: c.accent,
+  button: c.accent,
+});
 ---
 
 <BaseLayout title="Portfolio" preloadImage="/images/photos/portfolio-banner.jpg">
-  <PageHeader title="Portfolio" subtitle="実績・事例紹介" image="/images/photos/portfolio-banner.jpg">
-    <p>
-      バリュービルドのポートフォリオは、IT関連、サービス業、福祉関連、製造業、Eコマース、不動産など多岐に渡ります。分野に特定することなく、起業家の熱意、ビジネスモデルの優位性、市場動向をベースに投資判断を行います。是非、あなたのビジネスアイディアを教えてください。
-    </p>
-  </PageHeader>
+  <PageBanner image="/images/photos/portfolio-banner.jpg" />
 
-  <Section>
-    <div class="showcase-list">
-      {categories.map((category, i) => <CategoryShowcase category={category} reverse={i % 2 === 1} />)}
+  <section class="sec page-title">
+    <div class="row page-title__row">
+      <div class="col col-4-4">
+        <h1 class="mod page-title__title">Portfolio</h1>
+        <p class="mod page-title__subtitle">実績・事例紹介</p>
+      </div>
     </div>
-  </Section>
+    <!-- Intro: desktop (the tablet layout shows no intro, as on the original) -->
+    <div class="row intro hide-phone">
+      <div class="col col-4-4">
+        <p class="mod intro__text hide-tablet">{intro}</p>
+      </div>
+    </div>
+    <div class="row hide-desktop hide-tablet">
+      <div class="col col-4-4">
+        <p class="mod intro__text intro__text--phone">{intro}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Desktop -->
+  <section class="sec showcase hide-tablet hide-phone">
+    <div class="row" aria-hidden="true"><div class="col col-4-4"></div></div>
+    {
+      categories.map((c, i) =>
+        i % 2 === 0 ? (
+          <div class="row showcase__row showcase__row--left">
+            <div class="col col-1-2">
+              <div class="mod showcase__photo showcase__photo--a">
+                <img src={c.image} alt="" width="416" height="277" loading="lazy" />
+              </div>
+            </div>
+            <div class="col col-1-2">
+              <div class="mod line line--a" aria-hidden="true" />
+              <SlideCard class="mod showcase__card showcase__card--a" {...card(c)} />
+            </div>
+          </div>
+        ) : (
+          <div class="row showcase__row showcase__row--right">
+            <div class="col col-1-2">
+              <div class="mod line line--b" aria-hidden="true" />
+              <SlideCard class="mod showcase__card showcase__card--b" {...card(c)} />
+            </div>
+            <div class="col col-1-2">
+              <div class="mod showcase__photo showcase__photo--b">
+                <img src={c.image} alt="" width="416" height="277" loading="lazy" />
+              </div>
+            </div>
+          </div>
+        ),
+      )
+    }
+  </section>
+
+  <!-- Tablet + phone -->
+  <section class="sec stack hide-desktop">
+    {
+      categories.map((c, i) => {
+        const photo = (
+          <div class:list={['mod stack__photo', { 'stack__photo--right': i % 2 }]}>
+            <img src={c.image} alt="" width="980" height="654" loading="lazy" />
+          </div>
+        );
+        const line = <div class:list={['mod line', i % 2 ? 'line--m-b' : 'line--m-a']} aria-hidden="true" />;
+        const slide = <SlideCard class:list={['mod stack__card', { 'stack__card--left': i % 2 }]} {...card(c)} />;
+        // Module arrangement per row, as on the original.
+        if (i === 0)
+          return (
+            <div class="row stack__row">
+              <div class="col col-1-2">{photo}{line}</div>
+              <div class="col col-1-2">{slide}</div>
+            </div>
+          );
+        if (i === 1)
+          return (
+            <div class="row stack__row">
+              <div class="col col-1-2">{photo}{line}{slide}</div>
+              <div class="col col-1-2 col--empty" />
+            </div>
+          );
+        if (i === 2)
+          return (
+            <div class="row stack__row">
+              <div class="col col-1-2">{photo}</div>
+              <div class="col col-1-2">{line}{slide}</div>
+            </div>
+          );
+        return (
+          <div class="row stack__row stack__row--last">
+            <div class="col col-1-2 col--empty" />
+            <div class="col col-1-2">{photo}{line}{slide}</div>
+          </div>
+        );
+      })
+    }
+  </section>
 </BaseLayout>
 
 <style lang="scss">
-  .showcase-list {
-    display: grid;
-    gap: clamp(4rem, 8vw, 7.5rem);
+  // --- Title + intro -------------------------------------------------------------
+  .page-title {
+    padding: 50px 0 10px;
+
+    &__row {
+      padding-left: 200px;
+      padding-right: 200px;
+
+      @include phone {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+
+    &__title {
+      padding-bottom: 20px;
+      @include text-page-title;
+      line-height: inherit;
+
+      @include phone {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    &__subtitle {
+      @include text-page-subtitle;
+
+      @include phone {
+        padding-bottom: 10px;
+      }
+    }
+  }
+
+  .intro {
+    padding-top: 1px;
+
+    &__text {
+      padding: 0 150px;
+      @include text-intro;
+      text-align: justify;
+
+      &--phone {
+        padding: 0;
+        line-height: 1.8em;
+        letter-spacing: 2px;
+      }
+    }
+  }
+
+  // --- Thin angled line above each card (Divi divider) ---------------------------
+  .line {
+    position: relative;
+    width: 71%;
+    height: 23px;
+    margin: 0 auto !important;
+    transform: scaleX(1.04) scaleY(1.04) rotateX(358deg) rotateY(0deg) rotateZ(var(--angle));
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      border-top: 2px solid var(--color);
+    }
+
+    // Desktop: orange rising to the right / navy rising to the left.
+    &--a {
+      --angle: 142deg;
+      --color: #{$color-orange};
+    }
+
+    &--b {
+      --angle: 222deg;
+      --color: #{$color-navy};
+      width: 70%;
+    }
+
+    // Tablet/phone: pulled up over the photo, at the card's side.
+    &--m-a,
+    &--m-b {
+      margin-top: -100px !important;
+    }
+
+    &--m-a {
+      --angle: 142deg;
+      --color: #{$color-orange};
+      margin-left: auto !important;
+      margin-right: 0 !important;
+    }
+
+    &--m-b {
+      --angle: 226deg;
+      --color: #{$color-navy};
+      margin-left: 0 !important;
+      margin-right: auto !important;
+    }
+  }
+
+  // --- Desktop showcase ---------------------------------------------------------------
+  .showcase {
+    &__row--left {
+      padding-left: 200px;
+    }
+
+    &__row--right {
+      padding-right: 200px;
+    }
+
+    &__photo {
+      overflow: hidden;
+      line-height: 0;
+
+      &--a {
+        border-radius: 90px 0;
+      }
+
+      &--b {
+        border-radius: 0 90px;
+      }
+
+      img {
+        width: 100%;
+        height: auto;
+      }
+    }
+
+    // The card starts 150px down and reaches 140px across the photo.
+    &__card {
+      position: relative;
+      z-index: 216;
+      margin-top: 150px;
+
+      &--a {
+        margin-right: 150px;
+        margin-left: -140px;
+      }
+
+      &--b {
+        margin-right: -140px;
+        margin-left: 150px;
+      }
+    }
+  }
+
+  // --- Tablet/phone stack ---------------------------------------------------------------
+  .stack {
+    margin-top: -75px;
+    padding-left: 0;
+    padding-right: 0;
+
+    &__row + &__row {
+      margin-top: 30px;
+    }
+
+    &__row--last {
+      margin-bottom: 50px;
+    }
+
+    &__photo {
+      width: 70%;
+      overflow: hidden;
+      line-height: 0;
+      border-radius: 90px 0;
+
+      &--right {
+        margin-left: auto;
+      }
+
+      img {
+        width: 100%;
+        height: auto;
+      }
+    }
+
+    &__card {
+      width: 80%;
+      margin-left: auto;
+      box-shadow: 10px 10px 0 0 $color-navy;
+
+      &--left {
+        margin-left: 0;
+        margin-right: auto;
+        box-shadow: 10px 10px 0 0 $color-orange;
+      }
+    }
   }
 </style>

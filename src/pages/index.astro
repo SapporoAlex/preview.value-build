@@ -1,161 +1,481 @@
 ---
+// Home page. Mirrors the original layout section by section, including the
+// separate desktop / tablet / phone versions the original uses for some blocks
+// (.hide-desktop / .hide-tablet / .hide-phone).
 import BaseLayout from '@layouts/BaseLayout.astro';
-import HomeHero from '@components/sections/HomeHero.astro';
-import Section from '@components/ui/Section.astro';
-import SectionTitle from '@components/ui/SectionTitle.astro';
+import ParallaxBg from '@components/ui/ParallaxBg.astro';
+import Lines from '@components/ui/Lines.astro';
 import IpoCard from '@components/cards/IpoCard.astro';
 import LinkTile from '@components/cards/LinkTile.astro';
-import LogoCard from '@components/cards/LogoCard.astro';
-import { ipoTrackRecord, aboutTiles, partners } from '@data/home';
+import PartnerCard from '@components/cards/PartnerCard.astro';
+import { intro, kv, about, ipo, ipoTrackRecord, aboutTiles, portfolioCapsule, partners, partnersPhone } from '@data/home';
+
+const [kudan, zappallas] = ipoTrackRecord;
 ---
 
-<BaseLayout preloadImage="/images/brand/hero.jpg">
-  <HomeHero />
-
-  <!-- About intro -->
-  <Section narrow>
-    <SectionTitle title="About Us" subtitle="スタートアップへのエンジェル投資を行います。" />
-    <div class="home-intro prose" data-reveal="up">
-      <p>
-        バリュービルドは、シード・ステージ、アーリー・ステージのスタートアップ企業に投資をしている、日本では稀なエンジェル投資家です。
-      </p>
-      <p>
-        IT関連、サービス業、福祉関連、不動産など多岐に渡り投資を行っております。自身も起業経験のある投資家が創った、エンジェル投資に特化した投資法人です。
-      </p>
-      <p>
-        ベンチャーキャピタルからの支援を受けるにはまだ実績が足りない、株主からの多大な干渉を避けたい創業者の方は、エンジェル投資家からの資金集めという選択肢を検討してみるのはいかがでしょうか。
-      </p>
-    </div>
-  </Section>
-
-  <!-- IPO track record -->
-  <Section spacing="sm" narrow>
-    <h2 class="pill-heading" data-reveal="up">投資先IPO実績</h2>
-    <div class="grid grid--2">
-      {ipoTrackRecord.map((ipo, i) => <IpoCard {...ipo} delay={i * 150} />)}
-    </div>
-  </Section>
-
-  <!-- Navy band with links into the About page -->
-  <section class="home-band">
-    <div class="container">
-      <div class="grid grid--4">
-        {aboutTiles.map((tile, i) => <LinkTile {...tile} delay={i * 120} />)}
+<BaseLayout preloadImage="/images/brand/kv.png">
+  <!-- Title -->
+  <section class="sec intro">
+    <div class="row">
+      <div class="col col-4-4">
+        <h1 class="mod intro__title" data-reveal="fade">{intro.title}</h1>
+        <p class="mod intro__tagline hide-phone" data-reveal="fade">{intro.tagline}</p>
+        <p class="mod intro__tagline intro__tagline--phone hide-desktop hide-tablet" data-reveal="fade">
+          <Lines text={intro.taglinePhone} />
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- Portfolio teaser: gradient capsule -->
-  <div class="home-portfolio-wrap container">
-    <a class="home-portfolio" href="/portfolio-top/" data-reveal="up">
-      <span class="home-portfolio__title">Investment<br />Portfolio</span>
-      <span class="home-portfolio__subtitle">投資の実績</span>
-      <span class="home-portfolio__arrow" aria-hidden="true">→</span>
-    </a>
-  </div>
-
-  <!-- Partners -->
-  <Section>
-    <SectionTitle title="Our Partners" />
-    <div class="grid grid--4 partners">
-      {partners.map((p) => <LogoCard name={p.name} logo={p.logo} url={p.url} showName />)}
+  <!-- Photo band: desktop -->
+  <section class="sec kv hide-tablet hide-phone">
+    <ParallaxBg image="/images/brand/kv.png" position="50% 0%" />
+    <div class="row">
+      <div class="col col-1-2">
+        <div class="mod kv__boxes">
+          {kv.desktop.map((line) => <p class="kv__box">{line}</p>)}
+        </div>
+      </div>
+      <div class="col col-1-2 col--empty"></div>
     </div>
-  </Section>
+  </section>
+
+  <!-- Photo band: tablet + phone -->
+  <section class="sec kv-mobile hide-desktop">
+    <ParallaxBg image="/images/brand/kv.png" position="50% 0%" />
+    <div class="row">
+      <div class="col col-1-2">
+        <p class="mod kv-mobile__text" data-reveal="fade"><Lines text={kv.mobile} /></p>
+      </div>
+      <div class="col col-1-2 col--empty"></div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="sec about">
+    <div class="row hide-phone">
+      <div class="col col-4-4">
+        <h2 class="mod about__label">{about.label}</h2>
+        <p class="mod about__lead">{about.lead}</p>
+        <div class="mod about__text hide-tablet">
+          {about.desktop.map((p) => <p>{p}</p>)}
+        </div>
+        <div class="mod about__text about__text--tablet hide-desktop">
+          <p><Lines text={about.tablet} /></p>
+        </div>
+      </div>
+    </div>
+    <div class="row hide-desktop hide-tablet">
+      <div class="col col-4-4">
+        <h2 class="mod about__label">{about.label}</h2>
+        <p class="mod about__lead about__lead--phone"><Lines text={about.leadPhone} /></p>
+        <div class="mod about__text about__text--phone">
+          <p><Lines text={about.phone} /></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- "投資先IPO実績" pill -->
+  <section class="sec ipo-pill" data-reveal="fade">
+    <a class="row ipo-pill__link" href={ipo.href}>
+      <div class="col col-4-4">
+        <p class="mod">{ipo.label}</p>
+      </div>
+    </a>
+  </section>
+
+  <!-- IPO track record: desktop / tablet / phone layouts -->
+  <section class="sec ipo">
+    <div class="row row--flex ipo__row hide-tablet hide-phone">
+      <div class="col col-1-2"><IpoCard class="ipo__card ipo__card--d1" company={kudan} data-reveal="fade" /></div>
+      <div class="col col-1-2"><IpoCard class="ipo__card ipo__card--d2" company={zappallas} data-reveal="fade" /></div>
+    </div>
+    <div class="row row--flex row--g1 ipo__row ipo__row--tablet hide-desktop hide-phone">
+      <div class="col col-1-2"><IpoCard class="ipo__card ipo__card--t1" company={kudan} tablet /></div>
+      <div class="col col-1-2"><IpoCard class="ipo__card ipo__card--t2" company={zappallas} tablet /></div>
+    </div>
+    <div class="row ipo__row--phone hide-desktop hide-tablet">
+      <div class="col col-1-2"><IpoCard class="ipo__card ipo__card--p1" company={kudan} /></div>
+      <div class="col col-1-2"><IpoCard class="ipo__card ipo__card--p2" company={zappallas} /></div>
+    </div>
+  </section>
+
+  <!-- Navy band with links into the About page -->
+  <section class="sec tiles hide-phone">
+    <div class="row row--4col tiles__row">
+      {
+        aboutTiles.map((tile, i) => (
+          <div class="col col-1-4">
+            <LinkTile class:list={['tiles__tile', { 'tiles__tile--narrow': i === 1 }]} title={tile.title} href={tile.href} newTab={tile.newTab} />
+          </div>
+        ))
+      }
+    </div>
+  </section>
+  <section class="sec tiles hide-desktop hide-tablet">
+    <div class="row tiles__row--phone">
+      <div class="col col-4-4">
+        {
+          aboutTiles.map((tile, i) => (
+            <LinkTile class:list={['mod tiles__tile tiles__tile--phone', `tiles__tile--p${i + 1}`]} title={tile.titlePhone} href={tile.hrefPhone} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio capsule -->
+  <section class="sec capsule">
+    <a class="row capsule__link" href={portfolioCapsule.href} data-reveal="fade">
+      <div class="col col-4-4">
+        <p class="mod capsule__title">{portfolioCapsule.title}</p>
+        <p class="mod capsule__subtitle">{portfolioCapsule.subtitle}</p>
+        <p class="mod capsule__arrow">→</p>
+      </div>
+    </a>
+  </section>
+
+  <!-- Partners: phone -->
+  <section class="sec partners partners--phone hide-desktop hide-tablet">
+    <div class="row">
+      <div class="col col-4-4"><h2 class="mod partners__label">Our Partners</h2></div>
+    </div>
+    <div class="partners__grid">
+      {partnersPhone.map((p) => <PartnerCard class="partners__card" name={p.name} logo={p.logo} />)}
+    </div>
+  </section>
+
+  <!-- Partners: desktop + tablet -->
+  <section class="sec partners hide-phone">
+    <div class="row">
+      <div class="col col-4-4"><h2 class="mod partners__label">Our Partners</h2></div>
+    </div>
+    <div class="row row--4col partners__row">
+      {partners.slice(0, 4).map((p) => <div class="col col-1-4"><PartnerCard {...p} /></div>)}
+    </div>
+    <div class="row row--4col partners__row">
+      {partners.slice(4).map((p) => <div class="col col-1-4"><PartnerCard {...p} /></div>)}
+      <div class="col col-1-4 col--empty"></div>
+    </div>
+    <!-- Empty row kept from the original (adds its spacing below the logos). -->
+    <div class="row partners__row" aria-hidden="true"><div class="col col-1-4 col--empty"></div></div>
+  </section>
 </BaseLayout>
 
 <style lang="scss">
-  .home-intro {
-    @include text-intro;
-    text-align: left;
+  // --- Title -------------------------------------------------------------------
+  .intro {
+    padding: 100px 0 60px;
 
-    @include mq(lg) {
-      text-align: justify;
+    &__title {
+      padding-bottom: 0;
+      @include font($font-heading, 40px, 600, 1.2em, 7px);
+      color: $color-navy;
+      text-align: center;
+    }
+
+    &__tagline {
+      @include font($font-body, 17px, 500, null, 2px);
+      color: $color-navy;
+      text-align: center;
+
+      &--phone {
+        padding-top: 10px;
+        font-size: 16px;
+      }
     }
   }
 
-  // Rounded gradient label used for the IPO heading.
-  .pill-heading {
-    width: fit-content;
-    margin: 0 auto 2.5rem;
-    padding: 0.9rem 1.75rem;
-    border-radius: 999px;
-    background: linear-gradient(90deg, $color-navy 0%, #1d6b62 100%);
-    font-family: $font-body;
-    font-weight: 500;
-    font-size: 1rem;
-    letter-spacing: 3px;
-    color: $color-white;
+  // --- Photo band ------------------------------------------------------------------
+  .kv {
+    .row {
+      padding-bottom: 100px;
+    }
+
+    &__box {
+      padding: 20px;
+      background: $color-white;
+      @include font($font-body, 16px, 500, 1em, 3px);
+
+      &:first-child {
+        width: 370px;
+        padding-bottom: 5px;
+      }
+
+      &:last-child {
+        width: 470px;
+      }
+    }
   }
 
-  // Navy band: photo blended with a navy → mint gradient (original effect).
-  .home-band {
-    padding-block: $section-space;
-    background:
-      url('/images/photos/vb-003.jpeg') center / cover,
-      linear-gradient(55deg, $color-navy 47%, $color-mint 100%);
+  .kv-mobile {
+    margin-top: -60px;
+
+    .row {
+      padding-bottom: 50px;
+    }
+
+    &__text {
+      padding-bottom: 0;
+      @include font($font-body, 16px, 700, 1em, 4px);
+      color: $color-white;
+      text-shadow: 0 0.1em 0.1em rgba($color-black, 0.4);
+    }
+  }
+
+  // --- About -------------------------------------------------------------------------
+  .about {
+    padding: 50px 0;
+
+    &__label {
+      padding-bottom: 0;
+      @include text-label;
+      line-height: inherit;
+    }
+
+    &__lead {
+      @include text-lead;
+
+      &--phone {
+        padding: 10px 0;
+        line-height: 1.8em;
+      }
+    }
+
+    &__text {
+      padding: 0 150px;
+      @include text-intro;
+      text-align: justify;
+
+      &--tablet {
+        padding: 0 50px;
+      }
+
+      &--phone {
+        padding: 0;
+        line-height: 1.8em;
+        letter-spacing: 2px;
+      }
+    }
+  }
+
+  // --- IPO pill ------------------------------------------------------------------------
+  .ipo-pill {
+    width: 15%;
+    margin: 0 auto;
+    padding: 0;
+
+    @include tablet {
+      width: 29%;
+    }
+
+    @include phone {
+      width: 56%;
+    }
+
+    &__link {
+      display: block;
+      padding: 20px 0;
+      overflow: hidden;
+      background-image: linear-gradient(288deg, $color-navy 0%, $color-green-dark 100%);
+      border-radius: 150px;
+      @include font($font-body, 16px, 500, 2em, 3px);
+      color: $color-white;
+      text-align: center;
+    }
+  }
+
+  // --- IPO cards -----------------------------------------------------------------------
+  .ipo {
+    padding: 20px 0 50px;
+
+    &__row {
+      max-width: 2560px;
+      padding: 0 200px;
+    }
+
+    &__row--tablet {
+      width: 100%;
+      max-width: $row-max;
+      padding: 0 50px;
+    }
+
+    &__row--phone {
+      padding: 0;
+    }
+
+    &__card {
+      height: 100%;
+
+      &--d1 {
+        padding: 30px 50px 30px 30px;
+      }
+
+      &--d2 {
+        padding: 30px 30px 30px 50px;
+      }
+
+      &--t1 {
+        padding: 30px 10px 30px 30px;
+      }
+
+      &--t2 {
+        padding: 30px 0 30px 30px;
+      }
+
+      &--p1 {
+        padding: 44px 30px;
+        border-bottom: 2px solid $color-black;
+      }
+
+      &--p2 {
+        padding: 14px 30px 44px;
+      }
+    }
+  }
+
+  // --- Navy tiles ------------------------------------------------------------------------
+  .tiles {
+    background-color: transparent;
+    background-image: url('/images/photos/vb-003.jpeg'), linear-gradient(55deg, $color-navy 47%, $color-mint 100%);
     background-blend-mode: multiply;
+
+    &__row {
+      width: 100%;
+      max-width: 1302px;
+      padding: 50px 30px;
+    }
+
+    &__row--phone {
+      padding: 50px 30px;
+    }
+
+    &__tile--narrow {
+      padding: 30px 20px;
+    }
+
+    &__tile--phone {
+      padding: 14px 30px;
+
+      &:not(:last-child) {
+        margin-bottom: 20px;
+      }
+    }
+
+    &__tile--p1 {
+      padding: 14px 20px;
+    }
+
+    &__tile--p3 {
+      letter-spacing: 5px;
+    }
   }
 
-  .home-portfolio-wrap {
-    padding-block: $section-space 0;
-  }
+  // --- Portfolio capsule ----------------------------------------------------------------------
+  .capsule {
+    padding: 70px 400px 4%;
 
-  .home-portfolio {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    max-width: 480px;
-    min-height: 240px;
-    margin-inline: auto;
-    padding: 2.5rem 2rem;
-    border-radius: 999px;
-    background: linear-gradient(90deg, $color-mint 0%, $color-navy 100%);
-    background-size: 200% 100%;
-    background-position: left center;
-    color: $color-white;
-    text-align: center;
-    transition:
-      background-position 0.8s $ease-out,
-      transform $transition-base;
+    @include wide {
+      padding-bottom: 54px;
+    }
 
-    // Gradient shifts and the capsule lifts slightly on hover.
-    &:hover,
-    &:focus-visible {
-      background-position: right center;
-      transform: translateY(-4px);
+    @include tablet {
+      padding: 50px 70px;
+    }
+
+    @include phone {
+      padding: 50px 0 0;
+    }
+
+    &__link {
+      display: block;
+      padding: 40px 0;
+      overflow: hidden;
+      background-color: $color-orange;
+      background-image: linear-gradient(288deg, $color-navy 0%, $color-mint 100%);
+      border-radius: 150px;
+      color: $color-white;
+      text-align: center;
     }
 
     &__title {
-      font-family: $font-heading;
-      font-weight: 600;
-      font-size: clamp(1.3rem, 3vw, 1.8rem); // 29px
-      line-height: 1.3;
-      letter-spacing: 5px;
-      text-transform: uppercase;
+      margin: 10px 0 2px !important;
+      padding: 0 50px;
+      @include font($font-heading, 29px, 600, 1.3em, 5px);
+
+      @include phone {
+        font-size: 20px;
+      }
     }
 
     &__subtitle {
-      font-family: $font-body;
-      font-weight: 500;
-      font-size: 1rem;
-      letter-spacing: 3px;
+      @include font($font-body, 16px, 500, 2em, 3px);
+
+      @include phone {
+        margin-bottom: 0 !important;
+      }
     }
 
     &__arrow {
-      font-size: 2.3rem;
-      line-height: 1;
-      transition: transform $transition-base;
-    }
+      @include font($font-body, 37px, 500, null, 2px);
 
-    &:hover &__arrow {
-      transform: translateX(10px);
+      @include phone {
+        font-size: 25px;
+      }
     }
   }
 
+  // --- Partners ----------------------------------------------------------------------------------
   .partners {
-    gap: 2.5rem 2rem;
-    align-items: start;
+    padding: 1px 20px 4%;
+
+    @include wide {
+      padding-bottom: 54px;
+    }
+
+    @include tablet-down {
+      padding-bottom: 50px;
+    }
+
+    &__label {
+      padding-bottom: 0;
+      @include text-label;
+      line-height: inherit;
+    }
+
+    &__row {
+      width: 100%;
+    }
+
+    // Phone: 2 per line (3 per line on wider phones), no gaps between cards.
+    &--phone {
+      padding: 30px 20px 50px;
+    }
+
+    &__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 29.666%);
+      column-gap: 5.5%;
+      row-gap: 30px;
+      padding: 30px 0 60px;
+
+      @include small {
+        grid-template-columns: repeat(2, 47.5%);
+        column-gap: 0;
+      }
+    }
+
+    &__card {
+      @include small {
+        &:nth-child(odd) {
+          padding: 0 5px 0 10px;
+        }
+
+        &:nth-child(even) {
+          padding: 0 10px 0 5px;
+        }
+      }
+    }
   }
 </style>

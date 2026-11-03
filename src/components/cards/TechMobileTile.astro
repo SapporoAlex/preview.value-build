@@ -1,0 +1,148 @@
+---
+// Company tile on the Technologies & Lifestyle page, tablet/phone layout:
+// a fixed-height white card and a rounded label pill tucked under it.
+// Card types (padding per screen size) follow the original:
+//   a: 20px top/bottom       b: 75px (tablet) / 50+45px (phone)
+//   c: 75px / 50+30px        d: 75+40px / 50+35px      e: short card (83px)
+import type { TechMobileItem } from '@data/portfolio';
+import Lines from '@components/ui/Lines.astro';
+
+interface Props {
+  item: TechMobileItem;
+}
+
+const { item } = Astro.props;
+const hide = { 'hide-tablet': item.hideOnTablet };
+const cardVars = [
+  item.cardGap !== undefined && `--gap: ${item.cardGap}px`,
+  item.logo && `--natural: ${item.logo.natural}px`,
+]
+  .filter(Boolean)
+  .join('; ');
+const labelVars = [
+  `--pad: ${item.labelPad}`,
+  item.labelPadPhone && `--pad-phone: ${item.labelPadPhone}`,
+  item.labelHeight && `--h: ${item.labelHeight}px`,
+]
+  .filter(Boolean)
+  .join('; ');
+---
+
+<a
+  class:list={['m-tile', `m-tile--${item.card}`, { 'm-tile--wide-shadow': item.wideShadow }, hide]}
+  href={item.url}
+  target="_blank"
+  rel="noopener"
+  style={cardVars}
+  aria-label={item.name}
+>
+  <span class="m-tile__logo">{item.logo && <img src={item.logo.src} alt="" loading="lazy" />}</span>
+</a>
+<div
+  class:list={['m-tile__label', `m-tile__label--${item.labelStyle ?? 'stack'}`, { 'm-tile__label--flush': item.flushOnPhone }, hide]}
+  style={labelVars}
+>
+  <div class:list={['m-tile__pill', `m-tile__pill--${item.color}`]}><Lines text={item.label} /></div>
+</div>
+
+<style lang="scss">
+  .m-tile {
+    display: block;
+    height: 140px;
+    margin-bottom: var(--gap, 30px);
+    padding: 20px 10px;
+    box-shadow: 0 2px 10px rgba($color-black, 0.3);
+
+    &--wide-shadow {
+      box-shadow: 0 2px 18px rgba($color-black, 0.3);
+    }
+
+    &--b {
+      padding: 75px 10px;
+
+      @include phone {
+        padding: 50px 10px 45px;
+      }
+    }
+
+    &--c {
+      padding: 75px 10px;
+
+      @include phone {
+        padding: 50px 10px 30px;
+      }
+    }
+
+    &--d {
+      padding: 75px 10px 40px;
+
+      @include phone {
+        padding: 50px 10px 35px;
+      }
+    }
+
+    &--e {
+      height: 83px;
+    }
+
+    &__logo {
+      display: block;
+      max-width: var(--natural, none);
+      margin: 0 auto;
+      line-height: 0;
+      filter: saturate(0%);
+
+      img {
+        width: 71%;
+        margin: 0 auto;
+      }
+    }
+
+    // Label block: pulled up 20px under the card (or set beside it).
+    &__label {
+      height: var(--h, auto);
+      padding: 7px 0 30px;
+      margin-top: -20px;
+
+      &--flush {
+        @include phone {
+          margin-top: 0;
+        }
+      }
+
+      &--side {
+        margin-top: 0;
+        padding: 10px 10px 0 0;
+      }
+
+      &--side-low {
+        margin-top: 0;
+        padding: 20px 10px 0 0;
+      }
+    }
+
+    &__pill {
+      padding: var(--pad);
+      border-radius: 30px;
+      @include font($font-accent, 10px, 300, 1.5em, 1px);
+      color: $color-white;
+      text-align: center;
+
+      @include phone {
+        padding: var(--pad-phone, var(--pad));
+      }
+
+      &--navy {
+        background: $color-navy;
+      }
+
+      &--orange {
+        background: $color-orange;
+      }
+
+      &--teal {
+        background: $color-teal;
+      }
+    }
+  }
+</style>

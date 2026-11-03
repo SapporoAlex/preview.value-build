@@ -1,26 +1,165 @@
 ---
-// "Other Categories & Portfolio" block at the bottom of each category page.
-// Pass the key of the current page's category so it is left out.
+// "Other Categories & Portfolio" block at the bottom of each category page:
+// three white cards with an icon, coloured top/bottom rules and "MOREー".
+// Colours and padding differ per card on the original, so each page passes
+// its own list.
 import { categories } from '@data/portfolio';
-import Section from '@components/ui/Section.astro';
-import SectionTitle from '@components/ui/SectionTitle.astro';
-import CategoryCard from '@components/cards/CategoryCard.astro';
 
-interface Props {
-  current: string;
+export interface OtherCategoryCard {
+  key: string; // category key from src/data/portfolio.ts
+  accent: 'orange' | 'teal';
+  padX: number; // side padding (desktop + tablet)
+  padPhone?: [number, number]; // right/left padding on phones, if different
 }
 
-const { current } = Astro.props;
-const others = categories.filter((c) => c.key !== current);
+interface Props {
+  cards: OtherCategoryCard[];
+  gutter?: 'none' | 'narrow'; // space between the cards' columns on desktop
+  flushTop?: boolean; // 1px top padding instead of the usual section padding
+  fade?: boolean; // light grey → white background (Technologies page)
+  minHeight?: string;
+}
+
+const { cards, gutter = 'none', flushTop = false, fade = false, minHeight } = Astro.props;
+
+// Outline icons (the original used icon-font glyphs at 32px).
+const icons: Record<string, string> = {
+  technology:
+    '<ellipse cx="16" cy="16" rx="13" ry="5"/><ellipse cx="16" cy="16" rx="13" ry="5" transform="rotate(60 16 16)"/><ellipse cx="16" cy="16" rx="13" ry="5" transform="rotate(120 16 16)"/><circle cx="16" cy="16" r="1.6"/>',
+  tourism: '<path d="M4 7l8-3 8 3 8-3v21l-8 3-8-3-8 3z"/><path d="M12 4v21M20 7v21"/>',
+  'real-estate':
+    '<path d="M8 28V5h12v23M20 12h6v16M5 28h24"/><path d="M11 9h2M15 9h2M11 13h2M15 13h2M11 17h2M15 17h2M11 21h2M15 21h2M23 16h1M23 20h1M23 24h1"/>',
+  'startups-real-estate':
+    '<path d="M6 11h5a3 3 0 1 1 6 0h5v5a3 3 0 1 1 0 6v5H17a3 3 0 1 0-6 0H6v-5a3 3 0 1 0 0-6z"/>',
+};
 ---
 
-<Section background="fade">
-  <SectionTitle title="Other Categories & Portfolio" />
-  <div class="grid grid--3">
+<section class:list={['sec other', { 'other--flush': flushTop, 'other--fade': fade }]} style={minHeight ? `min-height: ${minHeight}` : undefined}>
+  <div class="row other__head">
+    <div class="col col-4-4"><h2 class="mod other__label">Other Categories &amp; Portfolio</h2></div>
+  </div>
+  <div class:list={['row other__row', gutter === 'narrow' ? 'row--g2' : 'other__row--no-gutter']}>
     {
-      others.map((c, i) => (
-        <CategoryCard title={c.title} href={c.href} accent={i % 2 ? 'teal' : 'orange'} delay={i * 120} />
-      ))
+      cards.map((card) => {
+        const category = categories.find((c) => c.key === card.key)!;
+        const vars = [`--px: ${card.padX}px`, card.padPhone && `--pr-phone: ${card.padPhone[0]}px; --pl-phone: ${card.padPhone[1]}px`]
+          .filter(Boolean)
+          .join('; ');
+        return (
+          <div class="col col-1-3 other__col">
+            <a class:list={['other-card', `other-card--${card.accent}`]} href={category.href} style={vars}>
+              <svg class="other-card__icon" viewBox="0 0 32 32" aria-hidden="true" set:html={icons[card.key]} />
+              <span class="other-card__body">
+                <span class="other-card__title">{category.title}</span>
+                {card.key === 'tourism' && <span class="other-card__blank" />}
+                <span class="other-card__more">MOREー</span>
+              </span>
+            </a>
+          </div>
+        );
+      })
     }
   </div>
-</Section>
+</section>
+
+<style lang="scss">
+  .other {
+    &--fade {
+      background-image: linear-gradient(180deg, $color-grey-light 0%, $color-white 90%);
+    }
+
+    &--flush {
+      padding-top: 1px;
+    }
+
+    &__head {
+      @include tablet-down {
+        margin: 30px auto;
+      }
+    }
+
+    &__label {
+      padding-bottom: 0;
+      @include text-label;
+      line-height: inherit;
+    }
+
+    // Desktop: equal-height cards side by side; stacked below 981px.
+    &__row {
+      @include desktop {
+        align-items: stretch;
+      }
+    }
+
+    &__row--no-gutter > .col {
+      margin-bottom: 0;
+
+      @include desktop {
+        width: 33.3333%;
+        margin-right: 0;
+      }
+    }
+
+    &__col {
+      display: flex;
+    }
+  }
+
+  .other-card {
+    display: flex;
+    flex: 1;
+    width: 80%;
+    max-width: 80%;
+    margin: 0 auto 40px;
+    padding: 40px var(--px);
+    overflow: hidden;
+    background: $color-white;
+    border-top: 3px solid $color-orange;
+    border-bottom: 3px solid $color-orange;
+    border-radius: 3px;
+    @include font($font-heading, 16px, 300, 1.8em, 2px);
+    color: $color-navy;
+
+    @include phone {
+      padding-right: var(--pr-phone, var(--px));
+      padding-left: var(--pl-phone, var(--px));
+    }
+
+    &--teal {
+      border-color: $color-teal;
+    }
+
+    &__icon {
+      flex: none;
+      align-self: flex-start;
+      width: 34px;
+      height: 32px;
+      fill: none;
+      stroke: $color-navy;
+      stroke-width: 1.6;
+      stroke-linejoin: round;
+    }
+
+    &__body {
+      display: block;
+      padding-left: 15px;
+    }
+
+    &__title {
+      display: block;
+      padding-bottom: 10px;
+      @include font($font-heading, 19px, 500, 1.2em, 2px);
+    }
+
+    // Empty paragraph that only the Tourism card has on the original.
+    &__blank {
+      display: block;
+      height: 16px;
+    }
+
+    &__more {
+      display: block;
+      text-decoration: underline;
+    }
+  }
+</style>

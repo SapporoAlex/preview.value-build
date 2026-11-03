@@ -1,0 +1,56 @@
+---
+// Partner logo on white with a grey name tag underneath (home page).
+// The logo is greyscale and takes on its colours on hover, as on the original.
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'div'> {
+  name: string;
+  logo: string;
+  url?: string;
+}
+
+const { name, logo, url, class: className, ...rest } = Astro.props;
+const Tag = url ? 'a' : 'div';
+---
+
+<Tag class:list={['partner', className]} href={url} {...rest}>
+  <div class="partner__logo">
+    <!-- All partner logos are prepared at 200×69. Not lazy-loaded: the same
+         logo appears in the hidden desktop/phone copy, and a deferred hidden
+         copy can stop the visible one from loading. -->
+    <img src={logo} alt="" width="200" height="69" />
+  </div>
+  <h4 class="partner__name">{name}</h4>
+</Tag>
+
+<style lang="scss">
+  .partner {
+    display: block;
+    background: $color-white;
+    text-align: center;
+
+    &__logo {
+      padding: 25px 0;
+      line-height: 0;
+      filter: saturate(0%);
+      transition: filter 300ms ease;
+
+      img {
+        display: inline-block;
+        max-width: 100%;
+      }
+    }
+
+    &:hover &__logo {
+      filter: saturate(104%);
+    }
+
+    &__name {
+      padding: 5px 0 10px;
+      background: $color-grey-tag;
+      @include font($font-label, 14px, 500, 1.3em, 2px);
+      text-transform: uppercase;
+      color: $color-navy;
+    }
+  }
+</style>

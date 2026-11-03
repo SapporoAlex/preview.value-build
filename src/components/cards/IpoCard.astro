@@ -1,60 +1,58 @@
 ---
-// IPO track record entry (home page).
-interface Props {
-  name: string;
-  market: string;
-  description: string;
-  history: string;
-  href?: string;
-  delay?: number;
+// IPO track record entry (home page). The whole card is a link.
+// Padding differs per layout, so the page sets it through `class`.
+import type { HTMLAttributes } from 'astro/types';
+import type { IpoCompany } from '@data/home';
+
+interface Props extends HTMLAttributes<'a'> {
+  company: IpoCompany;
+  tablet?: boolean; // use the tablet copy of the history line
 }
 
-const { name, market, description, history, href, delay = 0 } = Astro.props;
-const Tag = href ? 'a' : 'article';
+const { company, tablet = false, class: className, ...rest } = Astro.props;
 ---
 
-<Tag class="ipo-card" href={href} data-reveal="up" style={`--reveal-delay: ${delay}ms`}>
-  <h3 class="ipo-card__name">{name}</h3>
-  <p class="ipo-card__market">{market}</p>
-  <p class="ipo-card__description">{description}</p>
-  <p class="ipo-card__history">{history}</p>
-</Tag>
+<a class:list={['ipo-card', className]} href={company.href} {...rest}>
+  <div class="ipo-card__logo">{company.logo && <img src={company.logo} alt="" loading="lazy" />}</div>
+  <h4 class="ipo-card__name">{company.name}</h4>
+  <div class="ipo-card__text">
+    <p>{company.market}</p>
+    <p class="ipo-card__detail">{company.description}<br />{tablet ? company.historyTablet : company.history}</p>
+  </div>
+</a>
 
 <style lang="scss">
   .ipo-card {
     display: block;
-    height: 100%;
-    padding: 1.75rem 2rem;
-    border-left: 3px solid $color-teal;
+    @include font($font-body, 13px, 300, 1.8em, 4px);
     color: $color-black;
-    font-family: $font-body;
-    letter-spacing: 4px;
     text-transform: uppercase;
-    transition: border-color $transition-base;
+    text-align: left;
 
-    &:hover {
-      border-color: $color-orange;
+    // Logo area (60% wide). The original's logo files are missing, which
+    // leaves a 17px empty line; kept so the layout matches.
+    &__logo {
+      max-width: 60%;
+      min-height: 17px;
+      margin-bottom: 30px;
+
+      img {
+        width: 100%;
+      }
     }
 
     &__name {
-      font-family: $font-body;
-      font-size: 1rem;
-      font-weight: 500;
-      letter-spacing: inherit;
+      @include font($font-body, 16px, 500, 1.5em, 4px);
+      color: $color-black;
+      text-transform: uppercase;
     }
 
-    &__market {
-      margin-top: 0.25rem;
-      font-size: 0.8125rem; // 13px
-      font-weight: 300;
+    p {
+      line-height: 1.8em;
     }
 
-    &__description,
-    &__history {
-      margin-top: 0.75rem;
-      font-size: 0.75rem; // 12px
-      font-weight: 300;
-      line-height: 1.8;
+    &__detail {
+      font-size: 12px;
     }
   }
 </style>

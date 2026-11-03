@@ -1,0 +1,67 @@
+---
+// Parallax background, as Divi's "true parallax" on the original site.
+// Place it as the first child of a `position: relative` section:
+//   <section class="sec"><ParallaxBg image="/images/brand/kv.png" position="50% 0%" /> … </section>
+//
+// The image layer is 30% of the window height taller than the section and
+// moves down at 30% of the scroll speed (same formula as Divi).
+interface Props {
+  image: string;
+  position?: string; // CSS background-position
+}
+
+const { image, position = '50% 50%' } = Astro.props;
+---
+
+<span class="parallax" aria-hidden="true">
+  <span class="parallax__bg" data-parallax style={`background-image: url('${image}'); background-position: ${position};`}
+  ></span>
+</span>
+
+<script>
+  const layers = [...document.querySelectorAll<HTMLElement>('[data-parallax]')];
+
+  const update = () => {
+    const winH = window.innerHeight;
+    for (const layer of layers) {
+      const wrap = layer.parentElement!;
+      const rect = wrap.getBoundingClientRect();
+      if (!rect.height) continue; // hidden at this screen size
+      layer.style.height = `${rect.height + winH * 0.3}px`;
+      layer.style.top = `${-winH * 0.3}px`;
+      // (scrollTop + windowHeight - sectionTop) * 0.3, with sectionTop in page coordinates
+      layer.style.transform = `translate3d(0, ${(winH - rect.top) * 0.3}px, 0)`;
+    }
+  };
+
+  if (layers.length) {
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+  }
+</script>
+
+<style lang="scss">
+  .parallax {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+
+    &__bg {
+      position: absolute;
+      left: 0;
+      right: 0;
+      background-repeat: no-repeat;
+      background-size: cover;
+      will-change: transform;
+    }
+  }
+
+  // Content sits above the moving layer.
+  :global(.parallax ~ *) {
+    position: relative;
+    z-index: 1;
+  }
+</style>

@@ -1,84 +1,318 @@
 ---
+// Tourism. Section spacing (including the overlapping negative margins
+// between "Portfolio" and "Connect") follows the original.
 import BaseLayout from '@layouts/BaseLayout.astro';
-import PageHeader from '@components/ui/PageHeader.astro';
-import Section from '@components/ui/Section.astro';
-import SectionTitle from '@components/ui/SectionTitle.astro';
+import PageBanner from '@components/ui/PageBanner.astro';
+import Lines from '@components/ui/Lines.astro';
 import PhotoCard from '@components/cards/PhotoCard.astro';
 import OtherCategories from '@components/sections/OtherCategories.astro';
-import { tourismPortfolio } from '@data/portfolio';
+import { tourismPortfolio, tourismConnect } from '@data/portfolio';
+
+const intro = [
+  '『旅』という非日常の体験は、今や人間にとって三大欲求に匹敵するほどに大きな欲となって現れるようになりました。そして、多くの観光資源を有している日本は、世界的に見ても人気の旅行先です。',
+  '今後見込まれる、更なる観光事業の発展・拡大を見据え、旅行代理店や民泊運営会社、ブティックホテルなど、ツーリズム関連企業や不動産への投資にも力を入れております。',
+];
+const rows = [0, 3, 6].map((i) => tourismPortfolio.slice(i, i + 3));
+const blank = (n: number) => Array.from({ length: n }, () => ' ');
 ---
 
 <BaseLayout title="Tourism" preloadImage="/images/photos/tourism-banner.jpg">
-  <PageHeader title="Tourism" subtitle="観光事業" image="/images/photos/tourism-banner.jpg">
-    <p>
-      『旅』という非日常の体験は、今や人間にとって三大欲求に匹敵するほどに大きな欲となって現れるようになりました。そして、多くの観光資源を有している日本は、世界的に見ても人気の旅行先です。
-    </p>
-    <p>
-      今後見込まれる、更なる観光事業の発展・拡大を見据え、旅行代理店や民泊運営会社、ブティックホテルなど、ツーリズム関連企業や不動産への投資にも力を入れております。
-    </p>
-  </PageHeader>
+  <PageBanner image="/images/photos/tourism-banner.jpg" parallax />
 
-  <Section>
-    <SectionTitle variant="display" title="Portfolio" subtitle="事例紹介" />
-    <div class="grid grid--3 tourism-grid">
-      {tourismPortfolio.map((item, i) => <PhotoCard title={item.name} image={item.image} url={item.url} paragraphs={item.paragraphs} delay={(i % 3) * 120} />)}
-    </div>
-  </Section>
-
-  <!-- Connect / network -->
-  <Section background="grey">
-    <SectionTitle variant="display" title="Connect" subtitle="ネットワークの構築" />
-    <div class="connect">
-      <img class="connect__image" src="/images/photos/connect.jpg" alt="" loading="lazy" data-reveal="up" />
-      <div class="connect__content" data-reveal="up" style="--reveal-delay: 150ms">
-        <h3 class="connect__title">投資先同士の連携&ネットワークの拡充</h3>
-        <div class="connect__text prose">
-          <p>観光分野において、バリュービルドが投資先を決める上で重視しているのが『シナジー』です。</p>
-          <p>ビジネスの成功の鍵は、いかに自社の強みを強化し、相乗効果が見込める他社と連携をすることが成功の鍵であると当社は考えます。</p>
-          <p>
-            参入障壁の低い観光分野においては、ユニークなサービスを展開し続けることが企業の生存率を高めます。バリュービルドでは投資先の創業者たちが円滑なコミュニケーションをとり合い、各々のネットワークを紹介できる関係性の構築づくりをサポートします。そのことにより、多くのコラボレーションが生れています。
-          </p>
-        </div>
+  <section class="sec page-title">
+    <div class="row page-title__row">
+      <div class="col col-4-4">
+        <h1 class="mod page-title__title">Tourism</h1>
+        <p class="mod page-title__subtitle">観光事業</p>
       </div>
     </div>
-  </Section>
+    <div class="row intro hide-phone">
+      <div class="col col-4-4">
+        <div class="mod intro__text hide-tablet">{intro.map((p) => <p>{p}</p>)}</div>
+        <div class="mod intro__text intro__text--tablet hide-desktop">{intro.map((p) => <p>{p}</p>)}</div>
+      </div>
+    </div>
+    <div class="row hide-desktop hide-tablet">
+      <div class="col col-4-4">
+        <div class="mod intro__text intro__text--phone">{intro.map((p) => <p>{p}</p>)}</div>
+      </div>
+    </div>
+  </section>
 
-  <OtherCategories current="tourism" />
+  <!-- Empty spacer section kept from the original (not on phones). -->
+  <section class="sec hide-phone" aria-hidden="true"></section>
+
+  <section class="sec portfolio" id="blurb-tabs">
+    <div class="row heading heading--first hide-tablet hide-phone">
+      <div class="col col-4-4">
+        <h2 class="mod heading__title">Portfolio</h2>
+        <p class="mod heading__subtitle">事例紹介</p>
+      </div>
+    </div>
+    <div class="row heading heading--first heading--mobile hide-desktop">
+      <div class="col col-4-4">
+        <h2 class="mod heading__title heading__title--small">Portfolio</h2>
+        <p class="mod heading__subtitle">事例紹介</p>
+      </div>
+    </div>
+    {
+      rows.map((row, r) => (
+        <div class:list={['row row--flex row--g2 photo-row', `photo-row--${r + 1}`]}>
+          {row.map((company) => (
+            <div class="col col-1-3 photo-row__col">
+              <PhotoCard company={company} />
+            </div>
+          ))}
+        </div>
+      ))
+    }
+  </section>
+
+  <section class="sec connect">
+    <div class="row heading hide-tablet hide-phone">
+      <div class="col col-4-4">
+        <h2 class="mod heading__title">Connect</h2>
+        <p class="mod heading__subtitle">ネットワークの構築</p>
+      </div>
+    </div>
+    <div class="row heading hide-desktop">
+      <div class="col col-4-4">
+        <h2 class="mod heading__title heading__title--small">Connect</h2>
+        <p class="mod heading__subtitle">ネットワークの構築</p>
+      </div>
+    </div>
+    <div class="row row--flex row--g2 connect__row hide-tablet hide-phone">
+      <div class="col col-1-2 connect__image-col">
+        <div class="mod connect__image"><img src={tourismConnect.image} alt="" width="324" height="216" loading="lazy" /></div>
+      </div>
+      <div class="col col-1-2 connect__text-col">
+        <h3 class="mod connect__title">{tourismConnect.title}</h3>
+        <div class="mod connect__text">{[...tourismConnect.paragraphs, ...blank(tourismConnect.blankLines)].map((p) => <p>{p}</p>)}</div>
+      </div>
+    </div>
+    <div class="row hide-desktop">
+      <div class="col col-1-2 connect__image-col">
+        <div class="mod connect__image connect__image--mobile"><img src={tourismConnect.image} alt="" width="980" height="653" loading="lazy" /></div>
+      </div>
+      <div class="col col-1-2 connect__text-col">
+        <h3 class="mod connect__title"><Lines text={tourismConnect.titleMobile} /></h3>
+        <div class="mod connect__text connect__text--mobile">{[...tourismConnect.paragraphs, ...blank(1)].map((p) => <p>{p}</p>)}</div>
+      </div>
+    </div>
+  </section>
+
+  <OtherCategories
+    gutter="narrow"
+    cards={[
+      { key: 'technology', accent: 'teal', padX: 34, padPhone: [35, 35] },
+      { key: 'startups-real-estate', accent: 'orange', padX: 40, padPhone: [36, 36] },
+      { key: 'real-estate', accent: 'teal', padX: 64, padPhone: [50, 50] },
+    ]}
+  />
 </BaseLayout>
 
 <style lang="scss">
-  .tourism-grid {
-    gap: 3.5rem 2rem;
-  }
+  // --- Title + intro -------------------------------------------------------------
+  .page-title {
+    padding-left: 20px;
+    padding-right: 20px;
 
-  .connect {
-    display: grid;
-    gap: 2.5rem;
-    align-items: center;
-
-    @include mq(lg) {
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
+    @include phone {
+      padding: 50px 0 0;
     }
 
-    &__image {
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      object-fit: cover;
-      box-shadow: 10px 10px 0 0 $color-teal;
+    &__row {
+      padding-left: 200px;
+      padding-right: 200px;
+
+      @include phone {
+        padding-left: 0;
+        padding-right: 0;
+      }
     }
 
     &__title {
-      margin-bottom: 1.25rem;
-      font-family: $font-body;
-      font-size: clamp(1.05rem, 2vw, 1.1875rem); // 19px
-      font-weight: 500;
-      letter-spacing: 2px;
+      padding-bottom: 20px;
+      @include text-page-title;
+      line-height: inherit;
+
+      @include phone {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    &__subtitle {
+      @include text-page-subtitle;
+
+      @include phone {
+        padding-bottom: 10px;
+      }
+    }
+  }
+
+  .intro {
+    padding-top: 1px;
+
+    &__text {
+      padding: 0 150px;
+      @include text-intro;
+
+      &--tablet {
+        padding: 0 50px;
+      }
+
+      &--phone {
+        padding: 0;
+        line-height: 1.8em;
+        letter-spacing: 2px;
+      }
+    }
+  }
+
+  // --- Section headings ("Portfolio", "Connect") ------------------------------------
+  .heading {
+    margin-top: 50px;
+
+    &--first.heading--mobile {
+      @include phone {
+        margin-top: 0;
+      }
+    }
+
+    &__title {
+      padding-bottom: 0;
+      @include font($font-heading, 61px, 600, inherit, 4px);
+      color: $color-text;
+
+      &--small {
+        font-size: 40px;
+      }
+    }
+
+    &__subtitle {
+      @include font($font-body, 17px, 500, 1.8em, 2px);
+    }
+  }
+
+  // --- Portfolio --------------------------------------------------------------------
+  .portfolio {
+    width: 100%;
+    min-height: 2387.6px;
+    margin: -200px 0 -240px;
+    padding: 4px 20px 0;
+
+    @include phone {
+      margin-top: 0;
+    }
+  }
+
+  .photo-row {
+    padding-left: 0;
+    padding-right: 0;
+
+    // Stacked on tablets and phones.
+    @include tablet-down {
+      display: block;
+    }
+
+    &--1,
+    &--2 {
+      @include phone {
+        padding-top: 20px;
+      }
+    }
+
+    &--3 {
+      @include phone {
+        padding-top: 0;
+      }
+    }
+
+    &__col {
+      display: flex;
+    }
+  }
+
+  // Tablet/phone: the original's columns are floats. "Connect" is pulled up
+  // 450px, but its heading can't rise above the floated cards before it, so
+  // it starts right under the last card while the grey band starts higher.
+  @include tablet-down {
+    .photo-row,
+    .connect .heading {
+      &::after {
+        content: '';
+        display: table;
+        clear: both;
+      }
+    }
+
+    .photo-row__col,
+    .connect .heading > .col {
+      float: left;
+      width: 100%;
+    }
+  }
+
+  // --- Connect ----------------------------------------------------------------------
+  .connect {
+    margin-top: -450px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background: $color-grey-light;
+
+    @include desktop {
+      padding-bottom: 0;
+    }
+
+    @include phone {
+      margin-top: 230px;
+      padding-top: 17px;
+      padding-bottom: 17px;
+    }
+
+    &__row {
+      padding-left: 150px;
+      padding-right: 150px;
+    }
+
+    &__image-col {
+      display: flex;
+    }
+
+    &__image {
+      width: 85.7%;
+      margin: 0 auto;
+
+      &--mobile {
+        width: 100%;
+      }
+
+      img {
+        width: 100%;
+        height: auto;
+      }
+    }
+
+    &__text-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    &__title {
+      margin-top: 0;
+      padding-bottom: 0;
+      @include font($font-body, 19px, 500, 1.8em, 2px);
       color: $color-text;
     }
 
     &__text {
-      @include text-accent;
+      line-height: 1.6em;
+      letter-spacing: 1px;
+
+      &--mobile {
+        font-size: 15px;
+      }
     }
   }
 </style>

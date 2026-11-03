@@ -1,0 +1,113 @@
+---
+// White text card with coloured top/bottom rules and a "MORE ー" button
+// (a one-slide Divi slider on the original). Used on /portfolio-top/.
+// Spacing is proportional, as on the original: 6% side padding around the
+// slide, then 16% / 8% around the text.
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'div'> {
+  title: string;
+  text: string;
+  href: string;
+  rule: 'navy' | 'orange'; // top/bottom rule colour
+  button: 'navy' | 'orange'; // button colour
+}
+
+const { title, text, href, rule, button, class: className, ...rest } = Astro.props;
+---
+
+<div class:list={['slide-card', `slide-card--rule-${rule}`, className]} {...rest}>
+  <div class="slide-card__slide">
+    <div class="slide-card__desc">
+      <h2 class="slide-card__title"><a href={href}>{title}</a></h2>
+      <p class="slide-card__text">{text}</p>
+      <div class="slide-card__more">
+        <a class:list={['slide-card__button', `slide-card__button--${button}`]} href={href}>MORE ー</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style lang="scss">
+  .slide-card {
+    overflow: hidden;
+    border-top: 3px solid $color-navy;
+    border-bottom: 3px solid $color-navy;
+
+    &--rule-orange {
+      border-color: $color-orange;
+    }
+
+    &__slide {
+      padding: 0 6%;
+      background: $color-white;
+    }
+
+    &__desc {
+      padding: 16% 8%;
+      color: $color-navy;
+      text-align: left;
+    }
+
+    &__title {
+      @include font($font-heading, 22px, 400, 1.1em, 2px);
+
+      a {
+        color: $color-navy;
+      }
+    }
+
+    &__text {
+      @include font($font-body, 15px, 400, null, 2px);
+    }
+
+    &__more {
+      margin-top: 20px;
+    }
+
+    // Divi-style button: on hover the text shifts left and a chevron appears.
+    &__button {
+      position: relative;
+      display: inline-block;
+      padding: 0.3em 1em;
+      border: 1px solid $color-white;
+      @include font($font-heading, 18px, 500, 1.7em, 1px);
+      color: $color-white;
+      text-shadow: 0 1px 3px rgba($color-black, 0.3);
+      transition: all 0.2s;
+
+      @include tablet-down {
+        font-size: 19px;
+      }
+
+      &--navy {
+        background: $color-navy;
+      }
+
+      &--orange {
+        background: $color-orange;
+      }
+
+      &::after {
+        content: '›';
+        position: absolute;
+        top: 50%;
+        right: 0.35em;
+        font-size: 1.6em;
+        line-height: 1;
+        opacity: 0;
+        transform: translate(-0.3em, -55%);
+        transition: all 0.2s;
+      }
+
+      &:hover {
+        padding: 0.3em 2em 0.3em 0.7em;
+
+        &::after {
+          opacity: 1;
+          transform: translate(0, -55%);
+        }
+      }
+    }
+  }
+</style>

@@ -1,77 +1,38 @@
 ---
-// White-outlined square tile used on the navy home page band.
-// Text slides up on hover and the outline fills in.
-interface Props {
-  title: string; // use \n for line breaks
+// White-outlined tile on the navy band (home page). The whole tile is a link.
+// Padding and letter spacing vary slightly per tile, so the page can pass a class.
+import type { HTMLAttributes } from 'astro/types';
+import Lines from '@components/ui/Lines.astro';
+
+interface Props extends HTMLAttributes<'a'> {
+  title: string; // "\n" = line break
   href: string;
-  delay?: number; // ms, for staggered reveal
+  newTab?: boolean;
 }
 
-const { title, href, delay = 0 } = Astro.props;
+const { title, href, newTab = false, class: className, ...rest } = Astro.props;
 ---
 
-<a class="link-tile" href={href} data-reveal="up" style={`--reveal-delay: ${delay}ms`}>
-  <span class="link-tile__title">{title.split('\n').map((line, i) => (i ? [<br />, line] : line))}</span>
-  <span class="link-tile__arrow" aria-hidden="true">→</span>
+<a class:list={['tile', className]} href={href} target={newTab ? '_blank' : undefined} {...rest}>
+  <p class="tile__title"><Lines text={title} /></p>
 </a>
 
 <style lang="scss">
-  .link-tile {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    min-height: 200px;
-    padding: 2rem 1.5rem;
+  .tile {
+    display: block;
+    padding: 30px;
     border: 3px solid $color-white;
-    text-align: center;
+    @include font($font-body, 16px, 500, 1.8em, 6px);
     color: $color-white;
-    overflow: hidden;
-    isolation: isolate;
+    text-align: center;
+    text-transform: uppercase;
 
-    // White fill that slides up behind the text on hover.
+    // Space left by the original's (empty) icon above the text.
     &::before {
       content: '';
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      background: $color-white;
-      transform: translateY(101%);
-      transition: transform $transition-base;
-    }
-
-    &:hover::before,
-    &:focus-visible::before {
-      transform: translateY(0);
-    }
-
-    &__title {
-      font-family: $font-body;
-      font-weight: 500;
-      font-size: 1rem;
-      letter-spacing: 6px;
-      line-height: 1.8;
-      text-transform: uppercase;
-      transition: color $transition-base;
-    }
-
-    &__arrow {
-      font-size: 1.5rem;
-      color: $color-white;
-      transition:
-        transform $transition-base,
-        color $transition-base;
-    }
-
-    &:hover &__title {
-      color: $color-navy;
-    }
-
-    &:hover &__arrow {
-      color: $color-orange;
-      transform: translateX(6px);
+      display: block;
+      height: 21px;
+      margin-bottom: 30px;
     }
   }
 </style>

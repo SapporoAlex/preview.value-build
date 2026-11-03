@@ -1,7 +1,13 @@
 ---
-// Start-Ups × Real Estate case study: two overlapping photos + title/text.
+// Start-Ups & Real-Estate project. One section per project, containing:
+// - desktop: small photo(s) on the left with a long orange diagonal line,
+//   the large rounded photo on the right pulled up/left over them, then
+//   the title and text;
+// - tablet/phone: stacked photos (main photo right-aligned, a second one
+//   overlapping it), a teal diagonal line, title, text and a thin rule.
+// Spacing comes from the original's negative margins, so overlaps match.
 import type { Project } from '@data/portfolio';
-import DiagonalLine from '@components/ui/DiagonalLine.astro';
+import Lines from '@components/ui/Lines.astro';
 
 interface Props {
   project: Project;
@@ -9,94 +15,275 @@ interface Props {
 }
 
 const { project, index } = Astro.props;
-const reverse = index % 2 === 1;
-const [mainImage, insetImage] = project.images;
+const first = index === 0;
+const [width, height] = project.imageSize;
+// Pixel sizes of the secondary photos used here (so the layout is stable while loading).
+const sizes: Record<string, [number, number]> = {
+  '/images/projects/uruoi-hachiken.png': [294, 248],
+  '/images/projects/farm-cottage.jpg': [1200, 800],
+};
+const dims = (src: string) => ({ width: sizes[src]?.[0], height: sizes[src]?.[1] });
 ---
 
-<article class:list={['project', { 'project--reverse': reverse }]}>
-  <div class="project__media">
-    <img class="project__image project__image--main" src={mainImage} alt="" loading="lazy" data-reveal="fade" />
-    <img
-      class="project__image project__image--inset"
-      src={insetImage}
-      alt=""
-      loading="lazy"
-      data-reveal="up"
-      style="--reveal-delay: 200ms"
-    />
-  </div>
-
-  <div class="project__content">
-    <DiagonalLine class="project__line" color="teal" angle={-38} length="160px" />
-    <h2 class="project__title" data-reveal="up">{project.title}</h2>
-    <div class="project__text prose" data-reveal="up" style="--reveal-delay: 120ms">
-      {project.paragraphs.map((p) => <p>{p}</p>)}
+<section class:list={['sec project', `project--${index + 1}`]}>
+  <!-- Desktop -->
+  <div class="row project__row hide-tablet hide-phone">
+    <div class="col col-1-2">
+      {
+        project.sideImages.map((src, i) =>
+          src ? (
+            <div class="mod project__side">
+              <img src={src} alt="" {...dims(src)} loading="lazy" />
+            </div>
+          ) : (
+            <div class:list={['mod project__missing', { 'project__missing--up': i === 1 }]} aria-hidden="true" />
+          ),
+        )
+      }
+      <div class:list={['mod project__line', { 'project__line--first': first }]} aria-hidden="true"></div>
+    </div>
+    <div class="col col-1-2">
+      <div class="mod project__main"><img src={project.image} alt="" width={width} height={height} loading="lazy" /></div>
+      <h3 class="mod project__title">{project.title}</h3>
+      <div class="mod project__text">
+        {project.paragraphs.map((p) => <p>{p}</p>)}
+        {project.blankLine && <p>&nbsp;</p>}
+      </div>
     </div>
   </div>
-</article>
+
+  <!-- Tablet + phone -->
+  <div class="row project__row-m hide-desktop">
+    <div class="col col-1-2 col--empty"></div>
+    <div class="col col-1-2">
+      <div class="mod project__main-m"><img src={project.image} alt="" width={width} height={height} loading="lazy" /></div>
+      <div class:list={['mod project__second', { 'project__second--wide': first }]}>
+        {project.mobileImages[0] ? <img src={project.mobileImages[0]} alt="" {...dims(project.mobileImages[0])} loading="lazy" /> : <span class="project__gap" />}
+      </div>
+      <div class="mod project__line-m" aria-hidden="true"></div>
+      <div class="mod project__third">
+        {project.mobileImages[1] ? <img src={project.mobileImages[1]} alt="" {...dims(project.mobileImages[1])} loading="lazy" /> : <span class="project__gap" />}
+      </div>
+      <h3 class="mod project__title project__title--m"><Lines text={project.titleMobile ?? project.title} /></h3>
+      <div class="mod project__text project__text--m">
+        {project.paragraphsMobile.map((p) => <p>{p}</p>)}
+        <p>&nbsp;</p>
+      </div>
+      <div class="mod project__rule" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
 
 <style lang="scss">
-  .project {
-    display: grid;
-    gap: 3rem;
-    align-items: center;
+  // Thin rotated line (Divi divider module).
+  @mixin diagonal($color, $angle) {
+    position: relative;
+    z-index: -1;
+    height: 23px;
+    transform: scaleX(1.04) scaleY(1.04) rotateX(358deg) rotateY(0deg) rotateZ($angle);
 
-    @include mq(lg) {
-      grid-template-columns: 1fr 1fr;
-      gap: 5rem;
-    }
-
-    &--reverse &__media {
-      @include mq(lg) {
-        order: 2;
-      }
-    }
-
-    &__media {
-      position: relative;
-      padding-bottom: 18%;
-      padding-right: 18%;
-    }
-
-    &__image {
-      object-fit: cover;
-
-      &--main {
-        width: 100%;
-        aspect-ratio: 4 / 3;
-        background: $color-grey-light;
-      }
-
-      &--inset {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        width: 50%;
-        aspect-ratio: 1;
-        border: 6px solid $color-white;
-        box-shadow: $shadow-card; // lifts the inset photo off the main one
-      }
-    }
-
-    &__content {
-      position: relative;
-    }
-
-    // DiagonalLine is a child component, so it is styled with :global()
-    // under a scoped parent (Astro scoped styles don't reach into children).
-    &__content :global(.project__line) {
-      top: 0.5rem;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
       right: 0;
+      height: 1px;
+      border-top: 2px solid $color;
+    }
+  }
+
+  // Section spacing differs per project on the original.
+  .project {
+    &--1 {
+      margin-top: 80px;
+      padding-bottom: 0;
+
+      @include phone {
+        margin-top: 0;
+      }
+    }
+
+    &--2 {
+      padding-top: 0;
+    }
+
+    &--1 &__row-m {
+      margin-top: 50px;
+    }
+
+    &--2 &__row {
+      padding-top: 150px;
+    }
+
+    &--3 &__row-m,
+    &--4 &__row-m {
+      margin-top: -30px;
+    }
+
+    &--3 {
+      @include phone {
+        padding-top: 0;
+      }
+    }
+
+    &--4 {
+      @include phone {
+        padding: 0;
+      }
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    // --- Desktop --------------------------------------------------------------
+    &__row {
+      padding-left: 100px;
+      padding-right: 100px;
+      padding-bottom: 20px;
+    }
+
+    &:not(.project--2) &__row {
+      padding-top: 100px;
+    }
+
+    &__side {
+      overflow: hidden;
+      border-radius: 0 70px 70px;
+      line-height: 0;
+
+      img {
+        width: auto;
+        height: auto;
+      }
+    }
+
+    // A missing photo still takes up a 4px line on the original.
+    &__missing {
+      height: 4px;
+
+      &--up {
+        margin-top: -80px;
+      }
+    }
+
+    &__line {
+      margin: -250px auto 0 !important;
+      @include diagonal($color-orange, 142deg);
+
+      &--first {
+        margin-top: -300px !important;
+      }
+    }
+
+    &__main {
+      z-index: -4;
+      margin: -80px 0 0 -120px;
+      overflow: hidden;
+      border-radius: 90px 0 90px 90px;
+      line-height: 0;
+
+      img {
+        width: 100%;
+        height: auto;
+      }
     }
 
     &__title {
-      @include text-subheading;
-      margin-block: 2.5rem 1.25rem;
+      padding: 90px 0 0;
+      @include font($font-body, 18px, 500, 1.6em, 2px);
+      color: $color-text;
+
+      &--m {
+        padding-top: 40px;
+        font-family: $font-heading;
+        font-weight: 600;
+      }
     }
 
     &__text {
-      @include text-body;
-      letter-spacing: 1px;
+      @include font($font-body, 16px, 300, 2em, 1px);
+
+      &--m {
+        font-size: 15px;
+      }
+    }
+
+    // --- Tablet + phone ------------------------------------------------------
+    &__main-m {
+      text-align: right;
+      line-height: 0;
+
+      img {
+        display: inline-block;
+        width: auto;
+        height: 193px;
+        border-radius: 0 80px;
+      }
+    }
+
+    &__second {
+      width: 75%;
+      margin: 0 90px -50px -35px !important;
+      padding-top: 30px;
+      line-height: 0;
+
+      img {
+        width: auto;
+        height: 172px;
+        border-radius: 0 80px 80px 0;
+      }
+
+      &--wide {
+        width: 90%;
+        margin-bottom: -70px !important;
+
+        img {
+          height: 181px;
+        }
+      }
+    }
+
+    &__line-m {
+      width: 71%;
+      margin: 50px 0 -50px auto !important;
+      @include diagonal($color-teal, 142deg);
+    }
+
+    &__third {
+      width: 69%;
+      margin-left: auto;
+      margin-right: -35px;
+      padding-left: 70px;
+      line-height: 0;
+
+      img {
+        width: 100%;
+        height: auto;
+        border-radius: 80px 0 0 80px;
+      }
+    }
+
+    &__gap {
+      display: block;
+      height: 4px;
+    }
+
+    &__rule {
+      position: relative;
+      height: 23px;
+      margin-top: 30px !important;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        border-top: 1px solid $color-navy;
+      }
     }
   }
 </style>

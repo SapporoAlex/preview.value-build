@@ -1,0 +1,41 @@
+---
+// Full-width photo strip at the top of inner pages
+// (100px top/bottom padding around an empty row; 60px on phones).
+// `parallax` makes the photo move with scrolling (Tourism, Start-Ups pages).
+import ParallaxBg from '@components/ui/ParallaxBg.astro';
+
+interface Props {
+  image?: string;
+  position?: string; // CSS background-position
+  parallax?: boolean;
+}
+
+const { image, position = '50% 50%', parallax = false } = Astro.props;
+const style = image && !parallax ? `background-image: url('${image}'); background-position: ${position};` : undefined;
+---
+
+<section class="sec banner">
+  <div class="row banner__row" style={style}>
+    {parallax && image && <ParallaxBg image={image} position="50% 0%" />}
+    <div class="col col-4-4 col--empty"></div>
+  </div>
+</section>
+
+<style lang="scss">
+  .banner {
+    padding: 0;
+    background-color: $color-grey-light;
+
+    &__row {
+      width: 100%;
+      max-width: 100%;
+      padding: 100px 0;
+      background-size: cover;
+      background-repeat: no-repeat;
+
+      @include phone {
+        padding: 60px 0;
+      }
+    }
+  }
+</style>

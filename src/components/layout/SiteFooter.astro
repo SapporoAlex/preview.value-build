@@ -1,82 +1,87 @@
 ---
-// Navy footer: address / phone / email with icons, then copyright.
+// Navy footer: address / phone / email with icons, then the copyright line.
+// Spacing follows the original: a 32px icon column, 15px gap, 28px lines.
 import { site } from '@data/site';
 const { contact } = site;
 
-// Simple inline icons (no icon font needed).
+// Inline icons (the original used icon-font glyphs at 17px).
 const icons = {
-  pin: 'M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z',
+  pin: 'M12 1.5a7.5 7.5 0 0 0-7.5 7.5c0 5.6 7.5 13.5 7.5 13.5s7.5-7.9 7.5-13.5A7.5 7.5 0 0 0 12 1.5zm0 10.3a2.8 2.8 0 1 1 0-5.6 2.8 2.8 0 0 1 0 5.6z',
   phone:
     'M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z',
-  mail: 'M3 5h18v14H3V5zm2 2v.4l7 4.6 7-4.6V7H5zm14 2.8-7 4.6-7-4.6V17h14V9.8z',
 };
 ---
 
-<footer class="site-footer">
-  <div class="container">
-    <ul class="site-footer__contacts" role="list">
-      <li class="site-footer__contact">
-        <svg class="site-footer__icon" viewBox="0 0 24 24" aria-hidden="true"><path d={icons.pin} /></svg>
-        <address>{contact.address}</address>
-      </li>
-      <li class="site-footer__contact">
-        <svg class="site-footer__icon" viewBox="0 0 24 24" aria-hidden="true"><path d={icons.phone} /></svg>
-        <a href={contact.phoneHref}>{contact.phone}</a>
-      </li>
-      <li class="site-footer__contact">
-        <svg class="site-footer__icon" viewBox="0 0 24 24" aria-hidden="true"><path d={icons.mail} /></svg>
-        <a href={`mailto:${contact.email}`}>{contact.email}</a>
-      </li>
-    </ul>
-    <p class="site-footer__copyright">{site.copyright}</p>
+<footer class="footer">
+  <div class="row footer__contacts">
+    <div class="footer__item">
+      <svg class="footer__icon" viewBox="0 0 24 24" aria-hidden="true"><path d={icons.pin} /></svg>
+      <p class="footer__text">{contact.address}</p>
+    </div>
+    <a class="footer__item" href={contact.phoneHref}>
+      <svg class="footer__icon" viewBox="0 0 24 24" aria-hidden="true"><path d={icons.phone} /></svg>
+      <p class="footer__text">{contact.phone}</p>
+    </a>
+    <a class="footer__item" href={contact.emailHref}>
+      <svg class="footer__icon footer__icon--outline" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="2" y="5" width="20" height="14" />
+        <path d="M2 5l10 8 10-8M2 19l7.5-7M22 19l-7.5-7" />
+      </svg>
+      <p class="footer__text">{contact.email}</p>
+    </a>
+  </div>
+
+  <div class="row footer__copyright">
+    <p>{site.copyright}</p>
   </div>
 </footer>
 
 <style lang="scss">
-  .site-footer {
-    padding-block: 2.75rem 2rem;
+  .footer {
+    padding-top: 40px;
     background: $color-navy;
     color: $color-white;
 
-    &__contacts {
-      display: grid;
-      gap: 0.4rem;
-      margin: 0;
+    // Plain stacked rows (not the side-by-side column layout).
+    .row {
+      display: block;
     }
 
-    &__contact {
+    &__contacts {
+      padding: 0;
+    }
+
+    &__item {
       display: flex;
-      align-items: flex-start;
-      gap: 1.25rem;
-      font-family: $font-body;
-      font-weight: 300;
-      font-size: 0.95rem;
-      letter-spacing: 2px;
-      line-height: 1.6;
-
-      address {
-        font-style: normal;
-      }
-
-      a:hover {
-        opacity: 0.7;
-      }
+      color: $color-white;
     }
 
     &__icon {
-      flex-shrink: 0;
-      width: 16px;
-      height: 16px;
-      margin-top: 0.2em;
-      fill: currentColor;
+      flex: none;
+      width: 17px;
+      height: 17px;
+      margin-right: 30px; // 32px icon column + 15px gap
+      fill: $color-white;
+
+      &--outline {
+        fill: none;
+        stroke: $color-white;
+        stroke-width: 1.6;
+      }
+    }
+
+    &__text {
+      padding-bottom: 10px;
+      @include font($font-body, 15px, 300, 1.2em, 2px);
     }
 
     &__copyright {
-      margin-top: 1.75rem;
-      font-family: $font-accent;
-      font-weight: 500;
-      font-size: 1rem;
       text-align: center;
+
+      // Phone: the line sits directly under the contact lines.
+      @include phone {
+        margin-top: -30px;
+      }
     }
   }
 </style>

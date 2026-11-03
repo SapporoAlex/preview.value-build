@@ -1,0 +1,84 @@
+---
+// Company tile on the Technologies & Lifestyle page, desktop layout:
+// a white card with a soft shadow (logo inside, if there is one) and a
+// coloured label pill below. Per-card spacing comes from the data.
+import type { TechCard } from '@data/portfolio';
+import Lines from '@components/ui/Lines.astro';
+
+interface Props {
+  company: TechCard;
+}
+
+const { company: c } = Astro.props;
+const [padTop, padBottom] = c.pad ?? [25, 20];
+const compact = c.compact || c.label.includes('\n');
+const vars = [
+  `--pt: ${padTop}px`,
+  `--pb: ${padBottom}px`,
+  c.padX !== undefined && `--px: ${c.padX}px`,
+  c.height && `--h: ${c.height}px`,
+  c.gap && `--gap: ${c.gap}px`,
+  c.logo && `--natural: ${c.logo.natural}px`,
+  c.logo?.width && `--logo-w: ${c.logo.width}%`,
+]
+  .filter(Boolean)
+  .join('; ');
+---
+
+<a class="tech-tile" href={c.url} target="_blank" rel="noopener" style={vars} aria-label={c.name}>
+  <span class="tech-tile__logo">{c.logo && <img src={c.logo.src} alt="" loading="lazy" />}</span>
+</a>
+<p class:list={['tech-tile__label', `tech-tile__label--${c.color}`, { 'tech-tile__label--compact': compact }]} style={vars}>
+  <Lines text={c.label} />
+</p>
+
+<style lang="scss">
+  .tech-tile {
+    display: block;
+    height: var(--h, auto);
+    padding: var(--pt) var(--px, 20px) var(--pb);
+    box-shadow: 0 2px 12px rgba($color-black, 0.3);
+
+    // Logo: 71% of the card width, but never wider than 71% of the file
+    // itself (Divi behaviour). An empty logo slot still takes up 17px.
+    &__logo {
+      display: block;
+      max-width: var(--natural, none);
+      min-height: 17px;
+      margin: 0 auto 30px;
+      line-height: 0;
+      filter: saturate(0%);
+
+      img {
+        width: var(--logo-w, 71%);
+        margin: 0 auto;
+      }
+    }
+
+    &__label {
+      margin: var(--gap, 18px) 0 5px;
+      border-radius: 17px;
+      @include font($font-accent, 12px, 300, null, 1px);
+      color: $color-white;
+      text-align: center;
+
+      &--compact {
+        padding: 5px 0;
+        border-radius: 25px;
+        line-height: 1.5em;
+      }
+
+      &--navy {
+        background: $color-navy;
+      }
+
+      &--orange {
+        background: $color-orange;
+      }
+
+      &--teal {
+        background: $color-teal;
+      }
+    }
+  }
+</style>

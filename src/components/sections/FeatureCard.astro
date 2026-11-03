@@ -1,0 +1,96 @@
+---
+// About page feature, tablet + phone layout (≤ 980px):
+// a 171px photo strip, the number, a shaded statement box with a teal
+// offset shadow, then the title and text.
+import type { AboutFeature } from '@data/about';
+import Lines from '@components/ui/Lines.astro';
+
+interface Props {
+  feature: AboutFeature;
+  first?: boolean; // the first feature has a slightly larger shadow and extra spacing on phones
+}
+
+const { feature, first = false } = Astro.props;
+---
+
+<div class="feature-photo hide-desktop" id={feature.idMobile}>
+  <img src={feature.image} alt="" loading="lazy" />
+</div>
+
+<section class:list={['sec feature-card hide-desktop', { 'feature-card--first': first }]}>
+  <div class="row">
+    <div class="col col-4-4">
+      <p class="mod feature-card__number">{feature.number}</p>
+      <p class="mod feature-card__box"><Lines text={feature.headlineMobile} /></p>
+    </div>
+  </div>
+  <div class="row feature-card__body">
+    <div class="col col-1-2 col--empty"></div>
+    <div class="col col-1-2">
+      <h3 class="mod feature-card__title"><Lines text={feature.title} /></h3>
+      <div class="mod feature-card__text">
+        {feature.paragraphsMobile.map((p) => <p>{p}</p>)}
+        {feature.trailingBlankLine && <p>&nbsp;</p>}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  // Fixed-height strip showing the top of the photo.
+  .feature-photo {
+    height: 171px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .feature-card {
+    padding: 50px 20px;
+
+    @include phone {
+      padding: 50px 10px;
+    }
+
+    &__number {
+      @include font($font-heading, 17px, 600, null, 2px);
+    }
+
+    &__box {
+      background: #f7f7f7;
+      box-shadow: 10px 10px 0 0 $color-teal;
+      @include font($font-heading, 30px, 600, 1.2em, 4px);
+
+      @include phone {
+        padding: 10px !important;
+      }
+    }
+
+    &--first &__box {
+      box-shadow: 12px 12px 0 0 $color-teal;
+    }
+
+    &--first &__body {
+      padding-right: 1px;
+    }
+
+    &__title {
+      padding-bottom: 0;
+      @include font($font-body, 22px, 500, 1.8em, 2px);
+      color: $color-text;
+    }
+
+    &__text {
+      @include font($font-body, 16px, 300, 1.8em, 1px);
+    }
+
+    &--first &__text {
+      @include phone {
+        margin-top: 12px;
+      }
+    }
+  }
+</style>

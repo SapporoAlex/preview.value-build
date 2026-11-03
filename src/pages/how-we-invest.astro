@@ -1,100 +1,261 @@
 ---
+// How We Invest page: 8-step chart (wide on desktop, vertical on tablets and
+// phones), the before/after investment steps and entrepreneur testimonials.
 import BaseLayout from '@layouts/BaseLayout.astro';
-import PageHeader from '@components/ui/PageHeader.astro';
-import Section from '@components/ui/Section.astro';
-import SectionTitle from '@components/ui/SectionTitle.astro';
+import PageBanner from '@components/ui/PageBanner.astro';
 import StepCard from '@components/cards/StepCard.astro';
 import TestimonialCard from '@components/cards/TestimonialCard.astro';
 import { beforeInvestment, afterInvestment, testimonials } from '@data/invest';
 
-// Step titles cycle through these colours, as on the original site.
 const accents = ['navy', 'orange', 'teal', 'navy'] as const;
+// Title styles of the first group differ slightly on the original.
+const beforeTitleSizes = ['tall', 'tall', 'small', 'normal'] as const;
+const chartAlt =
+  '投資の8ステップ: 01 ご紹介やお問い合わせからプロジェクトスタート / 02 ビジネスのアイディアを共有 / 03 投資の方法について話し合い / 04 必要に応じて、運営ロケーションを探します / 05 プロジェクトに着手 / 06 バリュービルドがサポートし続けます / 07 一緒にビジネスを成長・拡大させていきましょう / 08 ビジネスの成功を全力でサポートします';
 ---
 
 <BaseLayout title="How we invest?" preloadImage="/images/photos/vb-008.jpeg">
-  <PageHeader title="How We Invest" subtitle="投資とサービスの流れ" image="/images/photos/vb-008.jpeg" />
+  <PageBanner image="/images/photos/vb-008.jpeg" />
 
-  <!-- 8-step chart: horizontal on desktop, vertical on phones -->
-  <Section spacing="sm">
-    <SectionTitle variant="display" title="8 Steps" />
-    <picture class="chart" data-reveal="fade">
-      <source media="(max-width: 767px)" srcset="/images/how/chart-sp.png" width="916" height="1942" />
-      <img
-        src="/images/how/chart.png"
-        width="2251"
-        height="527"
-        alt="投資の8ステップ: 01 ご紹介やお問い合わせからプロジェクトスタート / 02 ビジネスのアイディアを共有 / 03 投資の方法について話し合い / 04 必要に応じて、運営ロケーションを探します / 05 プロジェクトに着手 / 06 バリュービルドがサポートし続けます / 07 一緒にビジネスを成長・拡大させていきましょう / 08 ビジネスの成功を全力でサポートします"
-        loading="eager"
-        fetchpriority="high"
-      />
-    </picture>
-  </Section>
-
-  <Section spacing="sm">
-    <SectionTitle variant="display" italic title="Before Our Investment" subtitle="投資前のサポート" />
-    <div class="steps">
-      {beforeInvestment.map((step, i) => <StepCard step={step} accent={accents[i % 4]} delay={i * 120} />)}
+  <section class="sec">
+    <div class="row page-title__row">
+      <div class="col col-4-4">
+        <h1 class="mod page-title__title">How We Invest</h1>
+        <p class="mod page-title__subtitle">投資とサービスの流れ</p>
+      </div>
     </div>
-  </Section>
-
-  <Section spacing="sm">
-    <SectionTitle variant="display" italic title="After Our Investment" subtitle="投資後のサポート" />
-    <div class="steps">
-      {afterInvestment.map((step, i) => <StepCard step={step} accent={accents[i % 4]} delay={i * 120} />)}
+    <!-- Desktop: wide chart -->
+    <div class="row hide-tablet hide-phone">
+      <div class="col col-4-4"><h2 class="mod steps-title">8 Steps</h2></div>
     </div>
-  </Section>
-
-  <Section id="what-people-are-saying">
-    <SectionTitle title="Feedback from our Entrepreneurs" />
-    <p class="sort-note">社名アルファベット順</p>
-    <div class="testimonials">
-      {testimonials.map((t, i) => <TestimonialCard testimonial={t} delay={(i % 2) * 150} />)}
+    <div class="row hide-tablet hide-phone">
+      <div class="col col-4-4">
+        <div class="mod"><img class="chart" src="/images/how/chart.png" width="2251" height="527" alt={chartAlt} /></div>
+      </div>
     </div>
-  </Section>
+  </section>
+
+  <!-- Tablet + phone: vertical chart -->
+  <section class="sec chart-mobile hide-desktop">
+    <div class="row chart-mobile__head">
+      <div class="col col-4-4"><h2 class="mod chart-mobile__title">8 Steps</h2></div>
+    </div>
+    <div class="row">
+      <div class="col col-4-4">
+        <div class="mod"><img class="chart chart--mobile" src="/images/how/chart-sp.png" width="916" height="1942" alt={chartAlt} /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Before our investment -->
+  <section class="sec group group--before">
+    <div class="row group__head">
+      <div class="col col-4-4">
+        <h2 class="mod group__title">Before Our Investment</h2>
+        <p class="mod group__subtitle">投資前のサポート</p>
+      </div>
+    </div>
+    <div class="row row--4col row--g1 group__steps">
+      {
+        beforeInvestment.map((step, i) => (
+          <div class="col col-1-4">
+            <StepCard step={step} accent={accents[i]} titleSize={beforeTitleSizes[i]} />
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- After our investment -->
+  <section class="sec group group--after">
+    <div class="row group__head">
+      <div class="col col-4-4">
+        <h2 class="mod group__title group__title--after">After Our Investment&nbsp;</h2>
+        <p class="mod group__subtitle group__subtitle--after">投資後のサポート</p>
+      </div>
+    </div>
+    <div class="row row--4col row--g1 group__steps">
+      {
+        afterInvestment.map((step, i) => (
+          <div class="col col-1-4">
+            <StepCard step={step} accent={accents[i]} />
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="sec feedback" id="what-people-are-saying">
+    <div class="row">
+      <div class="col col-4-4"><h2 class="mod feedback__label">Feedback from our Entrepreneurs</h2></div>
+    </div>
+    <div class="row feedback__note-row">
+      <div class="col col-4-4"><p class="mod feedback__note">社名アルファベット順</p></div>
+    </div>
+    <div class="row feedback__row">
+      {testimonials.slice(0, 2).map((t, i) => <div class="col col-1-2"><TestimonialCard testimonial={t} id={`testimonial-${i + 1}`} /></div>)}
+    </div>
+    <div class="row">
+      {testimonials.slice(2).map((t, i) => <div class="col col-1-2"><TestimonialCard testimonial={t} id={`testimonial-${i + 3}`} /></div>)}
+    </div>
+  </section>
 </BaseLayout>
 
 <style lang="scss">
-  .chart img {
+  // --- Title ------------------------------------------------------------------
+  .page-title {
+    &__row {
+      padding-left: 200px;
+      padding-right: 200px;
+
+      @include phone {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+
+    &__title {
+      margin-bottom: 0 !important;
+      padding-bottom: 20px;
+      @include text-page-title;
+      line-height: 1.1em;
+
+      @include phone {
+        font-size: 37px;
+        letter-spacing: 1px;
+      }
+    }
+
+    &__subtitle {
+      @include text-page-subtitle;
+
+      @include phone {
+        padding-bottom: 10px;
+      }
+    }
+  }
+
+  // Big headings keep the page's 27.2px line height, as on the original
+  // (the 61px text overflows its line box).
+  .steps-title {
+    padding: 30px 0;
+    @include font($font-heading, 61px, 600, inherit, 4px);
+    color: $color-text;
+  }
+
+  .chart {
     width: 100%;
+    height: auto;
 
-    // The vertical phone version shouldn't stretch too wide.
-    @include mq-down(md) {
-      max-width: 420px;
-      margin-inline: auto;
+    &--mobile {
+      width: auto;
+      max-width: 100%;
     }
   }
 
-  .steps {
-    display: grid;
-    gap: 2.5rem 0;
+  .chart-mobile {
+    padding: 0 0 50px;
 
-    @include mq(sm) {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2.5rem 2rem;
+    &__head {
+      margin-top: -61px;
+      padding: 0;
     }
 
-    @include mq(lg) {
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0;
+    &__title {
+      margin: 30px 0 !important;
+      padding-bottom: 0;
+      @include font($font-heading, 61px, 600, inherit, 3px);
+      font-style: italic;
+      color: $color-text;
+
+      @include phone {
+        font-size: 20px;
+      }
     }
   }
 
-  .sort-note {
-    margin-bottom: 1.5rem;
-    font-family: $font-accent;
-    font-size: 0.75rem;
-    color: $color-navy;
-    text-align: right;
+  // --- Step groups ---------------------------------------------------------------
+  .group {
+    &--before {
+      padding: 20px 0 0;
+    }
+
+    &--after {
+      padding-top: 20px;
+    }
+
+    &__head {
+      padding: 0;
+    }
+
+    &__title {
+      margin-bottom: 20px !important;
+      padding-bottom: 0;
+      @include font($font-heading, 61px, 600, inherit, 3px);
+      font-style: italic;
+      color: $color-text;
+
+      @include phone {
+        font-size: 20px;
+      }
+
+      &--after {
+        padding-top: 20px;
+      }
+    }
+
+    &__subtitle {
+      @include font($font-body, 16px, 500, 1.8em, 2px);
+      font-style: italic;
+
+      &--after {
+        padding-left: 20px;
+
+        @include phone {
+          padding-left: 0;
+        }
+      }
+    }
   }
 
-  .testimonials {
-    display: grid;
-    gap: 2.5rem;
-    align-items: start;
+  // --- Testimonials ----------------------------------------------------------------
+  .feedback {
+    padding: 10px 0 54px;
 
-    @include mq(md) {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 3.5rem 2.5rem;
+    &__label {
+      padding-bottom: 0;
+      @include text-label;
+      line-height: inherit;
+    }
+
+    &__note-row {
+      margin-top: -34px;
+
+      @include phone {
+        margin-top: -50px;
+        margin-left: 214px;
+      }
+    }
+
+    &__note {
+      margin: 0 -6px 0 -2px;
+      font-family: 'ABeeZee', Helvetica, Arial, Lucida, sans-serif;
+      font-size: 12px;
+      color: $color-navy;
+      text-align: right;
+
+      @include tablet-down {
+        text-align: left;
+      }
+    }
+
+    &__row {
+      padding-bottom: 0;
+
+      @include phone {
+        margin-top: -24px;
+      }
     }
   }
 </style>

@@ -1,31 +1,129 @@
 ---
+// Start-Ups & Real-Estate.
 import BaseLayout from '@layouts/BaseLayout.astro';
-import PageHeader from '@components/ui/PageHeader.astro';
-import Section from '@components/ui/Section.astro';
+import PageBanner from '@components/ui/PageBanner.astro';
 import ProjectShowcase from '@components/sections/ProjectShowcase.astro';
 import OtherCategories from '@components/sections/OtherCategories.astro';
 import { realEstateProjects } from '@data/portfolio';
+
+const intro = [
+  '価値の見出されていないユニークな不動産と、起業家を結びつけるプロジェクトが「不動産 x スタートアップ」です。',
+  'あらかじめバリュービルドが所有する不動産にあう起業家を見つけたり、一方で起業家からの要望に応じて不動産を見つけたり、柔軟な対応を行います。',
+  ' 「不動産 x スタートアップ」プロジェクトなら、ビジネスアイデアを叶える不動産を、融資ではなく投資という形で手に入れる事業を開始することが可能となります。',
+];
+// The tablet intro on the original starts with a draft paragraph (ending in "XXXX").
+const tabletLead =
+  'バリュービルドは、シード・ステージ、アーリー・ステージのスタートアップ企業に投資をしている、日本では稀なエンジェル投資家です。\nIT関連、サービス業、福祉関連、不動産など多岐に渡り投資を行っております。自身も経営者だった投資家が創った、エンジェル投資に特化した投資法人です。ベンチャーキャピタルからの支援を受けるにはまだ実績が足りない、投資の世界はわからないがXXXX';
 ---
 
 <BaseLayout title="Start-Ups & Real-Estate" preloadImage="/images/photos/vb-007.jpg">
-  <PageHeader title="Start-Ups & Real-Estate" subtitle="スタートアップビジネス×不動産" image="/images/photos/vb-007.jpg">
-    <p>価値の見出されていないユニークな不動産と、起業家を結びつけるプロジェクトが「不動産 x スタートアップ」です。</p>
-    <p>あらかじめバリュービルドが所有する不動産にあう起業家を見つけたり、一方で起業家からの要望に応じて不動産を見つけたり、柔軟な対応を行います。</p>
-    <p>「不動産 x スタートアップ」プロジェクトなら、ビジネスアイデアを叶える不動産を、融資ではなく投資という形で手に入れる事業を開始することが可能となります。</p>
-  </PageHeader>
+  <PageBanner image="/images/photos/vb-007.jpg" parallax />
 
-  <Section>
-    <div class="project-list">
-      {realEstateProjects.map((project, i) => <ProjectShowcase project={project} index={i} />)}
+  <section class="sec page-title">
+    <div class="row page-title__row">
+      <div class="col col-4-4">
+        <h1 class="mod page-title__title page-title__title--mobile hide-desktop">Start-Ups＆<br />Real-Estate</h1>
+        <h1 class="mod page-title__title hide-tablet hide-phone">Start-Ups＆Real-Estate</h1>
+        <p class="mod page-title__subtitle hide-tablet hide-phone">スタートアップビジネス×不動産</p>
+        <p class="mod page-title__subtitle hide-desktop">スタートアップビジネス<br />×<br />不動産</p>
+      </div>
     </div>
-  </Section>
+    <div class="row intro hide-phone">
+      <div class="col col-4-4">
+        <div class="mod intro__text hide-tablet">{intro.map((p) => <p>{p}</p>)}</div>
+        <div class="mod intro__text intro__text--tablet hide-desktop">
+          <p>{tabletLead.split('\n').map((line, i) => (i ? [<br />, line] : line))}</p>
+          {intro.map((p) => <p>{p}</p>)}
+        </div>
+      </div>
+    </div>
+    <div class="row hide-desktop hide-tablet">
+      <div class="col col-4-4">
+        <div class="mod intro__text intro__text--phone">{intro.map((p) => <p>{p}</p>)}</div>
+      </div>
+    </div>
+  </section>
 
-  <OtherCategories current="startups-real-estate" />
+  {realEstateProjects.map((project, i) => <ProjectShowcase project={project} index={i} />)}
+
+  <OtherCategories
+    cards={[
+      { key: 'technology', accent: 'teal', padX: 34 },
+      { key: 'tourism', accent: 'orange', padX: 64, padPhone: [50, 43] },
+      { key: 'real-estate', accent: 'teal', padX: 64, padPhone: [50, 50] },
+    ]}
+  />
 </BaseLayout>
 
 <style lang="scss">
-  .project-list {
-    display: grid;
-    gap: clamp(4rem, 10vw, 8rem);
+  // --- Title + intro -------------------------------------------------------------
+  .page-title {
+    margin-bottom: -59px;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 1px;
+
+    &__row {
+      padding-left: 200px;
+      padding-right: 200px;
+
+      @include phone {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+
+    &__title {
+      padding-bottom: 20px;
+      @include text-page-title;
+      font-size: 40px;
+      line-height: 1em;
+
+      &--mobile {
+        font-size: 35px;
+        line-height: 1.2em;
+
+        @include phone {
+          margin-bottom: 0 !important;
+        }
+      }
+    }
+
+    &__subtitle {
+      @include text-page-subtitle;
+
+      @include phone {
+        padding-bottom: 10px;
+      }
+    }
+  }
+
+  .intro {
+    padding-top: 1px;
+
+    &__text {
+      padding: 0 150px;
+      @include text-intro;
+
+      &--tablet {
+        padding: 0 50px;
+        text-align: justify;
+      }
+
+      &--phone {
+        padding: 0;
+        line-height: 1.8em;
+        letter-spacing: 2px;
+      }
+    }
+  }
+
+  // "Other Categories" sits 20px closer on this page (no top padding on phones).
+  :global(.other) {
+    margin-top: -20px;
+
+    @include phone {
+      padding-top: 0;
+    }
   }
 </style>

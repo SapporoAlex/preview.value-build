@@ -1,0 +1,10 @@
+---
+// Renders text with "\n" as line breaks: <Lines text={'line 1\nline 2'} />
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+---
+
+{text.split('\n').map((line, i) => (i ? [<br />, line] : line))}
